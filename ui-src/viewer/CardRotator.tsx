@@ -10,7 +10,7 @@ const CardRotator = ({
   padding = 0.4,
   reversed = false,
   initialFlipped = false,
-  setGlarePos,
+  setCursorPos,
   children,
 }: {
   width: number;
@@ -20,7 +20,7 @@ const CardRotator = ({
   padding?: number;
   reversed?: boolean;
   initialFlipped?: boolean;
-  setGlarePos: (glarePos: {x: number; y: number}) => void;
+  setCursorPos: (cursorPos: {x: number; y: number}) => void;
   children: React.ReactNode;
 }) => {
   const [hovered, setHovered] = useState(false);
@@ -70,13 +70,13 @@ const CardRotator = ({
     const y = THREE.MathUtils.clamp(local.y / (height / 2), -1, 1);
 
     targetTilt.current = { x: -y * 0.15, y: (flipped ? -x : x) * 0.15 };
-    setGlarePos({ x: flipped ? -x : x, y });
+    setCursorPos({ x: flipped ? -x : x, y });
   };
 
   const handlePointerOut = () => {
     setHovered(false);
     targetTilt.current = { x: 0, y: 0 };
-    setGlarePos({ x: 0, y: 0 });
+    setCursorPos({ x: 0, y: 0 });
   };
 
   const handleClick = (e: any) => {
