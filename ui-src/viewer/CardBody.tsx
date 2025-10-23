@@ -18,7 +18,7 @@ const CardBody = ({
       steps={1}
       smoothness={4}
       bevelSegments={0}>
-      <meshStandardMaterial color="white" />
+      <meshStandardMaterial color="#979A9C" />
     </RoundedBox>
   );
 }

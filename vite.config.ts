@@ -6,7 +6,7 @@ import { viteSingleFile } from "vite-plugin-singlefile";
 export default defineConfig({
   root: "./ui-src",
   plugins: [reactRefresh(), viteSingleFile()],
-  assetsInclude: [],
+  assetsInclude: ['**/*.glb'],
   build: {
     target: "esnext",
     assetsInlineLimit: 100000000,

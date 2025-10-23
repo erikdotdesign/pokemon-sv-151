@@ -1,15 +1,17 @@
 varying vec2 vUv;
 uniform vec2 uPointer;
-// Rarities
-// 0 - common
-// 1 - uncommon
-// 2 - rare
-// 3 - double rare
-// 4 - ultra rare
-// 5 - illustration rare
-// 6 - special illustration rare
-// 7 - hyper rare
-uniform int uRarity;
+// Foil types
+// 0 - none
+// 1 - flat silver
+// 2 - sv holo
+// 3 - sv ultra
+// 4 - sun pillar
+uniform int uFoilType;
+// Mask types
+// 0 - none
+// 1 - holo
+// 2 - etched
+uniform int uMaskType;
 uniform sampler2D uTextureCard;
 uniform sampler2D uTextureColor;
 uniform sampler2D uTextureNoise;
@@ -267,10 +269,11 @@ const float PI  = 3.141592653589793;
 
 // Foil
 
-vec3 computeFoilEffect(vec4 base, vec2 uv, float blendInterpolation1, float blendInterpolation2) {
+vec4 computeFoilEffect(vec4 base, vec2 uv, float blendInterpolation1, float blendInterpolation2) {
   vec4 finalColor = base;
 
-  vec2 rotateUv = uv * rotate(PI * 0.2);
+  vec2 rotateUv = rotate(-PI * 0.2) * (uv - 0.5) + 0.5;
+  // vec2 rotateUv = uv * rotate(PI * 0.2);
 
   // Foil
   vec2 foilUv = uv;
@@ -284,61 +287,71 @@ vec3 computeFoilEffect(vec4 base, vec2 uv, float blendInterpolation1, float blen
   vec4 noise = texture2D(uTextureNoise, noiseUv);
 
   // Gradient
-  // float gradientStepUv = 1.0;
-  // vec2 gradientUv = vec2(
-  //   uv.x + (1.0 - uPointer.x * gradientStepUv - gradientStepUv),
-  //   uv.y + (1.0 - uPointer.y * gradientStepUv - gradientStepUv)
-  // );
-  float gradientStepUv = 0.8;
+  float gradientStepUv = 1.25;
   vec2 gradientUv = vec2(
     rotateUv.x + (1.0 - uPointer.x * gradientStepUv - gradientStepUv),
     rotateUv.y + (1.0 - uPointer.y * gradientStepUv - gradientStepUv)
   );
+  // Horizontal gradient for SV Holo
+  // if (uFoilType == 2) {
+  //   gradientStepUv = 1.0;
+  //   gradientUv = vec2(
+  //     uv.x + (1.0 - (uPointer.x * 2.8) * gradientStepUv - gradientStepUv),
+  //     uv.y + (1.0 - (uPointer.y * 2.8) * gradientStepUv - gradientStepUv)
+  //   );
+  // }
+  float gradientScale = 0.25;
   gradientUv += noise.xy * 0.05;
   gradientUv += foil.xy * 0.2;
   gradientUv += etch.xy * 0.05;
+  gradientUv = (gradientUv - 0.5) * gradientScale + 0.5;
   vec4 gradient = texture2D(uTextureGradient, gradientUv);
 
   // Bands 1
-  float bandsStepUv = 0.6;
-  vec2 bandsUv = vec2(
-    rotateUv.x + (1.0 - uPointer.x * bandsStepUv - bandsStepUv),
-    rotateUv.y + (1.0 - uPointer.y * bandsStepUv - bandsStepUv)
+  float bandsStepUv1 = 1.2;
+  float bandsScale1 = 0.5;
+  vec2 bandsUv1 = vec2(
+    rotateUv.x + (1.0 - (uPointer.x * bandsScale1) * bandsStepUv1 - bandsStepUv1),
+    rotateUv.y + (1.0 - (uPointer.y * bandsScale1) * bandsStepUv1 - bandsStepUv1)
   );
   // Horizontal bands for SV Holos
-  if (uRarity == 2) {
-    bandsStepUv = 1.0;
-    bandsUv = vec2(
-      uv.x + (1.0 - uPointer.x * bandsStepUv - bandsStepUv),
-      uv.y + (1.0 - uPointer.y * bandsStepUv - bandsStepUv)
+  if (uFoilType == 2) {
+    bandsUv1 = vec2(
+      uv.x + (1.0 - (uPointer.x * bandsScale1) * bandsStepUv1 - bandsStepUv1),
+      uv.y + (1.0 - (uPointer.y * bandsScale1) * bandsStepUv1 - bandsStepUv1)
     );
   }
-  bandsUv += noise.xy * 0.05;
-  bandsUv += foil.xy * 0.2;
-  bandsUv += etch.xy * 0.05;
-  vec4 bands = texture2D(uTextureBands, bandsUv);
+  bandsUv1 += noise.xy * 0.05;
+  bandsUv1 += foil.xy * 0.2;
+  bandsUv1 += etch.xy * 0.05;
+  bandsUv1 = (bandsUv1 - 0.5) * bandsScale1 + 0.5;
+  vec4 bands1 = texture2D(uTextureBands, bandsUv1);
 
   // Bands 2
+  float bandsStepUv2 = 0.8;
+  float bandsScale2 = 0.75;
   vec2 bandsUv2 = vec2(
-    rotateUv.x - (1.0 + uPointer.x * bandsStepUv - bandsStepUv),
-    (1.0 - rotateUv.y) - (1.0 + uPointer.y * bandsStepUv - bandsStepUv)
+    rotateUv.x - (1.0 + (uPointer.x * bandsScale2) * bandsStepUv2 - bandsStepUv2),
+    (1.0 - rotateUv.y) - (1.0 + (uPointer.y * bandsScale2) * bandsStepUv2 - bandsStepUv2)
   );
   // Horizontal bands for SV Holos
-  if (uRarity == 2) {
+  if (uFoilType == 2) {
     bandsUv2 = vec2(
-      uv.x - (1.0 + uPointer.x * bandsStepUv - bandsStepUv),
-      (1.0 - uv.y) - (1.0 + uPointer.y * bandsStepUv - bandsStepUv)
+      uv.x - (1.0 + (uPointer.x * bandsScale2) * bandsStepUv2 - bandsStepUv2),
+      (1.0 - uv.y) - (1.0 + (uPointer.y * bandsScale2) * bandsStepUv2 - bandsStepUv2)
     );
   }
   bandsUv2 += noise.xy * 0.05;
   bandsUv2 += foil.xy * 0.2;
   bandsUv2 += etch.xy * 0.05;
+  bandsUv2 = (bandsUv2 - 0.5) * bandsScale2 + 0.5;
   vec4 bands2 = texture2D(uTextureBands, bandsUv2);
 
   // Masked gradients (bands and etch)
-  vec3 maskedGradient1 = gradient.rgb * bands.r;
+  vec3 maskedGradient1 = gradient.rgb * bands1.r;
   vec3 maskedGradient2 = gradient.rgb * bands2.r;
-  vec3 maskedGradient3 = gradient.rgb * etch.r;
+  float gray = dot(gradient.rgb, vec3(0.299, 0.587, 0.114));
+  vec3 maskedGradient3 = vec3(gray) * etch.r;
 
   // Bands with noise
   vec4 noisyBands1 = vec4(blendLinearLight(maskedGradient1.rgb, noise.rgb, blendInterpolation2), 1.0);
@@ -349,19 +362,30 @@ vec3 computeFoilEffect(vec4 base, vec2 uv, float blendInterpolation1, float blen
   finalColor = vec4(blendColorDodge(finalColor.rgb, noisyBands1.rgb, blendInterpolation2), 1.0);
 
   // Foils bands 2
-  finalColor = vec4(blendColorDodge(finalColor.rgb, noisyBands2.rgb, blendInterpolation2), 1.0);
-  finalColor = vec4(blendColorDodge(finalColor.rgb, noisyBands2.rgb, blendInterpolation2), 1.0);
+  if (uFoilType != 1) {
+    finalColor = vec4(blendColorDodge(finalColor.rgb, noisyBands2.rgb, blendInterpolation2), 1.0);
+    finalColor = vec4(blendColorDodge(finalColor.rgb, noisyBands2.rgb, blendInterpolation2), 1.0);
+  }
 
-  // Foil etch
-  finalColor = vec4(blendScreen(finalColor.rgb, maskedGradient3.rgb, blendInterpolation2), 1.0);
+  // Boost colors for SV Holo
+  if (uFoilType == 2) {
+    // vec3 maskedGradient4 = gradient.rgb * foil.r;
+    finalColor = vec4(blendMultiply(finalColor.rgb, gradient.rgb, blendInterpolation2 * 0.6), 1.0);
+  }
 
   // Base Foil
   finalColor = vec4(blendOverlay(finalColor.rgb, foil.rgb, blendInterpolation2), 1.0);
+
+  // Foil etch
+  if (uMaskType == 2) {
+    finalColor = vec4(blendColorBurn(finalColor.rgb, maskedGradient3.rgb, blendInterpolation2), 1.0);
+    finalColor = vec4(blendScreen(finalColor.rgb, maskedGradient3.rgb, blendInterpolation2), 1.0);
+  }
   
-  // Final foil
-  vec3 foilFinal = mix(base.rgb, finalColor.rgb, foil.r);
+  // Foil mask
+  finalColor = vec4(mix(base.rgb, finalColor.rgb, foil.r), 1.0);
   
-  return foilFinal;
+  return finalColor;
 }
 
 void main() {
@@ -369,7 +393,7 @@ void main() {
 
   // Card 
 	vec4 base = texture2D(uTextureCard, uv);
-  vec3 finalColor = base.rgb;
+  vec4 finalColor = base;
 
   // Highlight
   vec2 highlightUv = vec2(
@@ -382,17 +406,17 @@ void main() {
   float pointerDistance = 1.0 - length(uPointer);
   float blendInterpolation1 = clamp(pointerDistance, 0.0, 1.0) - 0.5;
 	blendInterpolation1 = clamp(blendInterpolation1, 0.0, 0.5);
-  float blendInterpolation2 = clamp(1.0 - pointerDistance, 0.0, 1.0);
+  float blendInterpolation2 = clamp(1.0 - pointerDistance, 0.0, 0.5);
 
-  if (uRarity != 0) {
-    finalColor = computeFoilEffect(base, uv, blendInterpolation1, blendInterpolation2);
+  if (uFoilType != 0) {
+    finalColor = computeFoilEffect(finalColor, uv, blendInterpolation1, blendInterpolation2);
   }
 
   // Highlight
-  vec4 highlightBlend = vec4(blendOverlay(finalColor, highlight.rgb, blendInterpolation2), 1.0);
+  // finalColor = vec4(blendAdd(finalColor.rgb, highlight.rgb, blendInterpolation2 * 0.5), 1.0);
 
   // Final
-  vec3 boostedFinal = pow(highlightBlend.rgb, vec3(0.6));
+  // finalColor = vec4(pow(finalColor.rgb, vec3(0.6)), 1.0);
 
-  gl_FragColor = vec4(boostedFinal.rgb, 1.0);
+  gl_FragColor = finalColor;
 }

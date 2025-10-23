@@ -1,6 +1,16 @@
+import { useState } from "react";
 import { Canvas } from "@react-three/fiber";
 import { Stage, OrbitControls } from "@react-three/drei";
 import Card from "./Card";
+import Pack from "./Pack";
+import CardStack from "./CardStack";
+
+import cardData from "../data/cards_merged.json";
+
+const getRandomCards = (count = 10) => {
+  const shuffled = [...cardData].sort(() => Math.random() - 0.5);
+  return shuffled.slice(0, count);
+};
 
 const Viewer = ({ 
   card,
@@ -9,6 +19,8 @@ const Viewer = ({
   card: any | null;
   canvasRef: React.RefObject<HTMLCanvasElement | null>;
 }) => {
+  const [view, setView] = useState("pack");
+
   return (
     <Canvas
       ref={canvasRef}
@@ -19,9 +31,13 @@ const Viewer = ({
         intensity={7}
         shadows="contact"
         environment={null}>
-        <Card />
+        {
+          view === "pack"
+          ? <Pack onClick={(e) => setView("stack")} />
+          : <CardStack cards={getRandomCards()} setView={setView} />
+        }
       </Stage>
-      <OrbitControls />
+      {/* <OrbitControls /> */}
     </Canvas>
   );
 };

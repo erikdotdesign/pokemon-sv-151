@@ -12,6 +12,7 @@ const CardRotator = ({
   initialFlipped = false,
   setCursorPos,
   children,
+  onClick
 }: {
   width: number;
   height: number;
@@ -22,6 +23,7 @@ const CardRotator = ({
   initialFlipped?: boolean;
   setCursorPos: (cursorPos: {x: number; y: number}) => void;
   children: React.ReactNode;
+  onClick?: (e: React.PointerEvent) => void;
 }) => {
   const [hovered, setHovered] = useState(false);
 
@@ -69,7 +71,7 @@ const CardRotator = ({
     const x = THREE.MathUtils.clamp(local.x / (width / 2), -1, 1);
     const y = THREE.MathUtils.clamp(local.y / (height / 2), -1, 1);
 
-    targetTilt.current = { x: -y * 0.15, y: (flipped ? -x : x) * 0.15 };
+    targetTilt.current = { x: -y * 0.25, y: (flipped ? -x : x) * 0.25 };
     setCursorPos({ x: flipped ? -x : x, y });
   };
 
@@ -80,10 +82,11 @@ const CardRotator = ({
   };
 
   const handleClick = (e: any) => {
-    e.stopPropagation();
-    const newFlipped = !flipped;
-    setFlipped(newFlipped);
-    targetRotY.current = newFlipped ? Math.PI : 0;
+    if (onClick) onClick(e);
+    // e.stopPropagation();
+    // const newFlipped = !flipped;
+    // setFlipped(newFlipped);
+    // targetRotY.current = newFlipped ? Math.PI : 0;
   };
 
   return (
@@ -96,7 +99,10 @@ const CardRotator = ({
         onPointerOut={handlePointerOut}
         onClick={handleClick}>
         <planeGeometry args={[width + padding, height + padding]} />
-        <meshBasicMaterial transparent opacity={0} />
+        <meshBasicMaterial 
+          transparent 
+          opacity={0} 
+          />
       </mesh>
 
       {/* Visual content that tilts/flips */}

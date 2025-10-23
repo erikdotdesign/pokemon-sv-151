@@ -1,40 +1,30 @@
-import { useState } from "react";
-import CardRotator from "./CardRotator";
+import { Group } from "three";
 import CardBody from "./CardBody";
 import CardFront from "./CardFront";
 import CardBack from "./CardBack";
-import CardGlare from "./CardGlare";
+
+export const CARD_ASPECT = 733 / 1024;
+export const CARD_WIDTH = 2;
+export const CARD_HEIGHT = CARD_WIDTH / CARD_ASPECT;
+export const CARD_CORNER_RADIUS = 0.15;
+export const CARD_DEPTH = 0.32;
 
 const Card = ({ 
   card, 
-  isFlipped = false 
+  cursorPos,
+  ...props
 }: { 
-  card?: any | null;
-  isFlipped?: boolean
-}) => {
-  const [cursorPos, setCursorPos] = useState({ x: 0, y: 0 });
-  const [flipped, setFlipped] = useState(isFlipped);
-  const aspect = 733 / 1024;
-  const width = 2.5;
-  const height = width / aspect;
-  const depth = 0.35;
-  const cornerRadius = 0.15;
-  const hitTargetPadding = 0.4;
-  const frontFaceDepth = depth / 2 - 0.145;
-  const backFaceDepth = -depth / 2 + 0.145;
+  card: any | null;
+  cursorPos: { x: number; y: number };
+} & Group) => {
+  const frontFaceDepth = CARD_DEPTH / 2 - 0.145;
+  const backFaceDepth = -CARD_DEPTH / 2 + 0.145;
   return (
-    <CardRotator
-      width={width}
-      height={height}
-      padding={hitTargetPadding}
-      setCursorPos={setCursorPos}
-      flipped={flipped}
-      setFlipped={setFlipped}>
-      <CardBack width={width} height={height} depth={backFaceDepth} cornerRadius={cornerRadius} />
-      <CardBody width={width} height={height} depth={depth} cornerRadius={cornerRadius} />
-      <CardFront cursorPos={cursorPos} width={width} height={height} depth={frontFaceDepth} cornerRadius={cornerRadius} />
-      {/* <CardGlare flipped={flipped} glarePos={cursorPos} width={width} height={height} depth={frontFaceDepth} cornerRadius={cornerRadius} /> */}
-    </CardRotator>
+    <group {...props}>
+      <CardBack width={CARD_WIDTH} height={CARD_HEIGHT} depth={backFaceDepth} cornerRadius={CARD_CORNER_RADIUS} />
+      <CardBody width={CARD_WIDTH} height={CARD_HEIGHT} depth={CARD_DEPTH} cornerRadius={CARD_CORNER_RADIUS} />
+      <CardFront card={card} cursorPos={cursorPos} width={CARD_WIDTH} height={CARD_HEIGHT} depth={frontFaceDepth} cornerRadius={CARD_CORNER_RADIUS} />
+    </group>
   );
 };
 
