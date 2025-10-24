@@ -1,13 +1,17 @@
 import { useState, Suspense } from "react";
+import { ContactShadows } from "@react-three/drei";
+import { Action, State } from "../reducer";
 import CardRotator from "./CardRotator";
 import PackModel from "./PackModel";
 
 const Pack = ({ 
-  isFlipped = false,
-  onClick
+  state,
+  dispatch,
+  isFlipped = false
 }: { 
+  state: State;
+  dispatch: (action: Action) => void;
   isFlipped?: boolean;
-  onClick?: (e: React.PointerEvent) => void;
 }) => {
   const [cursorPos, setCursorPos] = useState({ x: 0, y: 0 });
   const [flipped, setFlipped] = useState(isFlipped);
@@ -23,7 +27,9 @@ const Pack = ({
       setCursorPos={setCursorPos}
       flipped={flipped}
       setFlipped={setFlipped}
-      onClick={onClick}>
+      onClick={() => dispatch({
+        type: "OPEN_CURRENT_PACK"
+      })}>
       <Suspense fallback={null}>
         <PackModel />
       </Suspense>

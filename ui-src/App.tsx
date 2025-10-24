@@ -1,34 +1,41 @@
-import { useState, useRef, useEffect } from "react";
-import { TarotCard } from "../widget-src/types";
+import { useState, useRef, useEffect, useReducer } from "react";
+import reducer, { Action, Card, State } from "./reducer";
+import { getRandomCardIds } from "./selectors";
+import cardData from "./data/cards_merged.json";
 import Canvas from "./Canvas";
 import "./App.css";
 
+const CARDS_BY_ID = Object.fromEntries(
+  cardData.map(card => [card.ext.tcgl.cardID, card as Card])
+);
+
 const App = () => {
-  const [card, setCard] = useState<TarotCard | null>(null);
+  const [state, dispatch] = useReducer(reducer, {
+    view: "packs",
+    packs: {
+      current: {
+        cards: getRandomCardIds({ cardsById: CARDS_BY_ID } as State, 10),
+        opened: false,
+        activeIndex: 0
+      },
+      available: Infinity,
+      lastOpened: null
+    },
+    collection: {
+      cards: []
+    },
+    cardsById: CARDS_BY_ID,
+    hydrated: false
+  });
 
   const canvasRef = useRef<HTMLCanvasElement>(null);
-
-  useEffect(() => {
-    const handleMessage = (event: MessageEvent) => {
-      const msg = event.data.pluginMessage;
-      if (!msg) return;
-
-      if (msg.type === "card-info") {
-        setCard(msg.payload);
-      }
-    };
-
-    window.addEventListener("message", handleMessage);
-    parent.postMessage({ pluginMessage: { type: "ui-open" } }, "*");
-
-    return () => window.removeEventListener("message", handleMessage);
-  }, []);
   
   return (
     <main className="c-app">
       <section className="c-app__body">
         <Canvas
-          card={card}
+          state={state}
+          dispatch={dispatch}
           canvasRef={canvasRef} />
       </section>
     </main>

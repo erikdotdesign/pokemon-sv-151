@@ -1,43 +1,46 @@
-import { useState } from "react";
 import { Canvas } from "@react-three/fiber";
-import { Stage, OrbitControls } from "@react-three/drei";
-import Card from "./Card";
-import Pack from "./Pack";
-import CardStack from "./CardStack";
+import { OrbitControls, ContactShadows } from "@react-three/drei";
+import { Action, State } from "../reducer";
 
-import cardData from "../data/cards_merged.json";
-
-const getRandomCards = (count = 10) => {
-  const shuffled = [...cardData].sort(() => Math.random() - 0.5);
-  return shuffled.slice(0, count);
-};
+import PackViewer from "./PackViewer";
 
 const Viewer = ({ 
-  card,
-  canvasRef
-}: {
-  card: any | null;
+  canvasRef,
+  state,
+  dispatch
+}: { 
   canvasRef: React.RefObject<HTMLCanvasElement | null>;
+  state: State;
+  dispatch: (action: Action) => void;
 }) => {
-  const [view, setView] = useState("pack");
-
   return (
-    <Canvas
-      ref={canvasRef}
-      shadows
+    <Canvas 
+      ref={canvasRef} 
+      shadows 
       gl={{ stencil: true }}>
       <color attach="background" args={['#f2f2f2']} />
-      <Stage 
-        intensity={7}
-        shadows="contact"
-        environment={null}>
-        {
-          view === "pack"
-          ? <Pack onClick={(e) => setView("stack")} />
-          : <CardStack cards={getRandomCards()} setView={setView} />
-        }
-      </Stage>
-      {/* <OrbitControls /> */}
+      <ambientLight intensity={3} />
+      <directionalLight
+        position={[0, 8, 5]}
+        intensity={1}
+        castShadow
+        shadow-mapSize-width={1024}
+        shadow-mapSize-height={1024}
+      />
+      {
+        state.view === "packs"
+        ? <PackViewer 
+            state={state} 
+            dispatch={dispatch} />
+        : null
+      }
+      <ContactShadows
+        position={[0, state.packs.current.opened ? -1.75 : -2.25, 0]}
+        scale={10}
+        blur={1}
+        far={10}
+        opacity={0.25} />
+      <OrbitControls />
     </Canvas>
   );
 };

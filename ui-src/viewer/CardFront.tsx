@@ -32,8 +32,9 @@ export const CARD_FOIL_MAP = {
 
 export const CARD_MASK_MAP = { 
   NONE: 0, 
-  HOLO: 1, 
-  ETCHED: 2
+  REVERSE: 1,
+  HOLO: 2, 
+  ETCHED: 3
 };
 
 const CardFrontMaterial = shaderMaterial(
