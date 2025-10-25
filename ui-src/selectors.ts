@@ -86,58 +86,81 @@ export const getRandomCardIds = (state: State, count = 10) => {
   return result;
 };
 
-export const getRandomRareCards = (state: State): string[] => {
-  const allCards = Object.values(state.cardsById);
-  const rareCards = allCards.filter((c) => {
-    return c.rarity.designation === "ILLUSTRATION_RARE" ||
-    c.rarity.designation === "SPECIAL_ILLUSTRATION_RARE" ||
-    c.rarity.designation === "DOUBLE_RARE" ||
-    c.rarity.designation === "ULTRA_RARE" ||
-    c.rarity.designation === "HYPER_RARE";
-  });
-  const shuffled = [...rareCards].sort(() => Math.random() - 0.5);
-  return shuffled.slice(0, 10).map((c) => c.ext.tcgl.cardID);
-};
-
 export const getPackCards = (state: State): string[] => {
   const allCards = Object.values(state.cardsById);
   const result: string[] = [];
 
-  // Helper to pick a random card matching a filter
-  const pickRandom = (filterFn: (c: Card) => boolean) => {
+  const pickRandom = (filterFn: (c: Card) => boolean): Card => {
     const candidates = allCards.filter(filterFn);
+    if (!candidates.length) throw new Error("No candidates found for pickRandom filter");
     return candidates[Math.floor(Math.random() * candidates.length)];
   };
 
-  // 1–4: Commons
+  // 1–4: Commons (non-foil)
   for (let i = 0; i < 4; i++) {
-    const card = pickRandom(c => c.rarity.designation === "COMMON" && !("foil" in c));
-    result.push(card.ext.tcgl.cardID);
+    result.push(pickRandom(c => c.rarity?.designation === "COMMON" && !c.foil).ext.tcgl.cardID);
   }
 
-  // 5–7: Uncommons
+  // 5–7: Uncommons (non-foil)
   for (let i = 0; i < 3; i++) {
-    const card = pickRandom(c => c.rarity.designation === "UNCOMMON" && !("foil" in c));
-    result.push(card.ext.tcgl.cardID);
+    result.push(pickRandom(c => c.rarity?.designation === "UNCOMMON" && !c.foil).ext.tcgl.cardID);
   }
 
-  // 8: First reverse holo
+  // 8: First reverse holo (common/uncommon, FLAT_SILVER)
   const reverseCandidates = allCards.filter(
-    c =>
-      (c.rarity.designation === "COMMON" || c.rarity.designation === "UNCOMMON") &&
-      c.foil?.type === "FLAT_SILVER"
+    c => (c.rarity?.designation === "COMMON" || c.rarity?.designation === "UNCOMMON") &&
+         c.foil?.type === "FLAT_SILVER"
   );
-  const reverseHolo1 =
-    reverseCandidates[Math.floor(Math.random() * reverseCandidates.length)];
-  result.push(reverseHolo1.ext.tcgl.cardID);
+  if (!reverseCandidates.length) throw new Error("No reverse holo candidates available");
+  result.push(reverseCandidates[Math.floor(Math.random() * reverseCandidates.length)].ext.tcgl.cardID);
 
-  // 9: Weighted second reverse holo slot
+  // Weighted pick helper using card counts
   type SpecialRarity =
     | "ILLUSTRATION_RARE"
     | "SPECIAL_ILLUSTRATION_RARE"
     | "DOUBLE_RARE"
     | "ULTRA_RARE"
     | "HYPER_RARE";
+
+  // Weighted pick helper that supports a weighted fallback
+  const pickWeightedCard = (
+    allCards: Card[],
+    odds: Record<SpecialRarity, number>,
+    fallbackFilter: (c: Card) => boolean,
+    fallbackWeight: number
+  ): Card => {
+    const weightedPool: { card: Card; weight: number }[] = [];
+
+    // Add all special rarities
+    for (const [rarity, prob] of Object.entries(odds) as [SpecialRarity, number][]) {
+      const candidates = allCards.filter(c => c.rarity?.designation === rarity);
+      for (const c of candidates) {
+        weightedPool.push({ card: c, weight: prob });
+      }
+    }
+
+    // Add fallback cards (e.g., NORMAL_REVERSE or RARE) with its weight
+    const fallbackCards = allCards.filter(fallbackFilter);
+    for (const c of fallbackCards) {
+      weightedPool.push({ card: c, weight: fallbackWeight });
+    }
+
+    if (!weightedPool.length) {
+      throw new Error("No candidates found for weighted pick");
+    }
+
+    // Weighted pick
+    const totalWeight = weightedPool.reduce((sum, w) => sum + w.weight, 0);
+    let rnd = Math.random() * totalWeight;
+
+    for (const entry of weightedPool) {
+      if (rnd < entry.weight) return entry.card;
+      rnd -= entry.weight;
+    }
+
+    // Fallback safety
+    return fallbackCards[Math.floor(Math.random() * fallbackCards.length)];
+  };
 
   const specialSlotOdds: Record<SpecialRarity, number> = {
     HYPER_RARE: 0.0196,
@@ -147,38 +170,24 @@ export const getPackCards = (state: State): string[] => {
     DOUBLE_RARE: 0.125,
   };
 
-  // Calculate total probability to normalize fallback to normal reverse holo
-  const totalSpecialProb = Object.values(specialSlotOdds).reduce((a, b) => a + b, 0);
-  const normalReverseProb = 1 - totalSpecialProb;
-
-  // Pick weighted rarity
-  const rnd = Math.random();
-  let cumulative = 0;
-  let pickedRarity: SpecialRarity | "NORMAL_REVERSE" = "NORMAL_REVERSE";
-
-  for (const [rarity, prob] of Object.entries(specialSlotOdds) as [SpecialRarity, number][]) {
-    cumulative += prob;
-    if (rnd < cumulative) {
-      pickedRarity = rarity;
-      break;
-    }
-  }
-
-  let reverseHolo2: Card;
-  if (pickedRarity === "NORMAL_REVERSE") {
-    reverseHolo2 =
-      reverseCandidates[Math.floor(Math.random() * reverseCandidates.length)];
-  } else {
-    const specialCandidates = allCards.filter(c => c.rarity.designation === pickedRarity);
-    reverseHolo2 =
-      specialCandidates[Math.floor(Math.random() * specialCandidates.length)];
-  }
+  // Slot 9: second reverse holo
+  const reverseHolo2 = pickWeightedCard(
+    allCards,
+    specialSlotOdds, // HYPER_RARE, ULTRA_RARE, etc.
+    c => (c.rarity?.designation === "COMMON" || c.rarity?.designation === "UNCOMMON") &&
+        c.foil?.type === "FLAT_SILVER", // fallback pool
+    0.69 // weight bias toward reverse holo
+  );
   result.push(reverseHolo2.ext.tcgl.cardID);
 
-  // 10: Guaranteed rare (treated as holo)
-  const rareCandidates = allCards.filter(c => c.rarity.designation === "RARE");
-  const holo = rareCandidates[Math.floor(Math.random() * rareCandidates.length)];
-  result.push(holo.ext.tcgl.cardID);
+  // Slot 10: guaranteed rare holo
+  const rareHolo = pickWeightedCard(
+    allCards,
+    specialSlotOdds,
+    c => c.rarity?.designation === "RARE", // fallback pool
+    0.69 // weight bias toward normal rare
+  );
+  result.push(rareHolo.ext.tcgl.cardID);
 
   return result;
 };
