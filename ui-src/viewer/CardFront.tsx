@@ -108,8 +108,7 @@ const CardFront = ({
         uTextureBands={bandsTexture}
         depthTest={false}
         depthWrite={false}
-        transparent={false}
-      />
+        transparent={false} />
     </mesh>
   );
 }

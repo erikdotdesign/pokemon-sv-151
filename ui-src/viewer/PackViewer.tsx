@@ -1,6 +1,6 @@
 import { a, useSpring } from "@react-spring/three";
 import { Action, State } from "../reducer";
-import { getPackCards, getRandomRareCards } from "../selectors";
+import { getPackCards } from "../selectors";
 
 import Pack from "./Pack";
 import CardStack from "./CardStack";
@@ -30,7 +30,7 @@ const PackViewer = ({
     immediate: packViewed,
     onRest: () => {
       if (packViewed) {
-        dispatch({ type: "SET_NEW_CURRENT_PACK", cards: getRandomRareCards(state) });
+        dispatch({ type: "SET_NEW_CURRENT_PACK", cards: getPackCards(state) });
         setPackViewed(false);
       }
     }
