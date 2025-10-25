@@ -1,3 +1,5 @@
+import * as THREE from "three";
+
 export const titleCaseToCamelCase = (str: string) => {  
   // Split the string by spaces
   const words: string[] = str.split('_');

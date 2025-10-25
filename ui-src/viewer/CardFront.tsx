@@ -4,20 +4,21 @@ import { useFrame, extend } from "@react-three/fiber";
 import RoundedPlaneGeometry from "./RoundedPlaneGeometry";
 import { shaderMaterial } from "@react-three/drei";
 
-import NOISE_IMAGE from "../images/noise.webp";
-import HIGHLIGHT_IMAGE from "../images/highlight.webp";
-import GRADIENT_IMAGE from "../images/gradient.png";
-import BANDS_IMAGE from "../images/bands.png";
+import useTextureWithFallback from "./useTextureWithFallback";
 
 import cardFrontVertex from "../shaders/vertex/cardFront.vert?raw";
 import cardFrontFragment from "../shaders/fragment/cardFront.frag?raw";
 
-const localImages = import.meta.glob('../images_webp/**/*.{webp,png}', { eager: true, query: '?url', import: 'default' });
+import NOISE_IMAGE from "../images_webp/noise.webp";
+import GRADIENT_IMAGE from "../images_webp/gradient.webp";
+import BANDS_IMAGE from "../images_webp/bands.webp";
+
+const FOIL_IMAGES = import.meta.glob('../images_webp/foil/*.webp', { eager: true, import: 'default' });
+const ETCH_IMAGES = import.meta.glob('../images_webp/etch/*.webp', { eager: true, import: 'default' });
 
 // ----------------------
 // Global textures (loaded once)
 // ----------------------
-const highlightTexture = new THREE.TextureLoader().load(HIGHLIGHT_IMAGE);
 const noiseTexture = new THREE.TextureLoader().load(NOISE_IMAGE);
 const gradientTexture = new THREE.TextureLoader().load(GRADIENT_IMAGE);
 const bandsTexture = new THREE.TextureLoader().load(BANDS_IMAGE);
@@ -77,18 +78,8 @@ const CardFront = ({
   // Load card-specific textures with memoization
   // ----------------------
   const cardTexture = useMemo(() => new THREE.TextureLoader().load(card.images.front), [card.images.front]);
-
-  const foilTexture = useMemo(() => {
-    if (!card.images.foil) return;
-    const url = localImages[`../images_webp/foil/${card.ext.tcgl.cardID}.webp`];
-    return url ? new THREE.TextureLoader().load(url) : null;
-  }, [card.ext.tcgl.cardID, card.images.foil]);
-
-  const etchTexture = useMemo(() => {
-    if (!card.images.etch) return;
-    const url = localImages[`../images_webp/etch/${card.ext.tcgl.cardID}.webp`];
-    return url ? new THREE.TextureLoader().load(url) : null;
-  }, [card.ext.tcgl.cardID, card.images.etch]);
+  const foilTexture = useTextureWithFallback(card.images.foil, FOIL_IMAGES[`../images_webp/foil/${card.ext.tcgl.cardID}.webp`]);
+  const etchTexture = useTextureWithFallback(card.images.etch, ETCH_IMAGES[`../images_webp/etch/${card.ext.tcgl.cardID}.webp`]);
 
   // ----------------------
   // Cursor pointer update (avoid recreating vector)
@@ -111,7 +102,6 @@ const CardFront = ({
         uMaskType={card.foil ? CARD_MASK_MAP[card.foil.mask] : 0}
         uTextureCard={cardTexture}
         uTextureNoise={noiseTexture}
-        uTextureHighlight={highlightTexture}
         uTextureEtch={etchTexture}
         uTextureFoil={foilTexture}
         uTextureGradient={gradientTexture}

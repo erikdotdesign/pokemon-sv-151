@@ -1,12 +1,11 @@
 const fs = require('fs');
 const path = require('path');
-const sharp = require('sharp');
 
 // Load your JSON file
 const data = JSON.parse(fs.readFileSync("./data/cards_malie.json", "utf8"));
 
 // Base output directory
-const outBase = "./images_webp";
+const outBase = "./images";
 // const frontDir = path.join(outBase, "front");
 const foilDir = path.join(outBase, "foil");
 const etchDir = path.join(outBase, "etch");
@@ -16,23 +15,12 @@ for (const dir of [outBase, foilDir, etchDir]) {
   if (!fs.existsSync(dir)) fs.mkdirSync(dir, { recursive: true });
 }
 
-async function downloadImage(url) {
+async function downloadImage(url, outputPath) {
   const res = await fetch(url);
   if (!res.ok) throw new Error(`Failed to fetch ${url}`);
-  return Buffer.from(await res.arrayBuffer());
-}
-
-async function convertAndSave(url, outputPath) {
-  try {
-    console.log(`Downloading ${url}...`);
-    const imgBuffer = await downloadImage(url);
-    await sharp(imgBuffer)
-      .webp({ quality: 70 })
-      .toFile(outputPath);
-    console.log(`✅ Saved ${outputPath}`);
-  } catch (err) {
-    console.error(`❌ Error processing ${url}: ${err.message}`);
-  }
+  const buffer = Buffer.from(await res.arrayBuffer());
+  fs.writeFileSync(outputPath, buffer);
+  console.log(`✅ Saved ${outputPath}`);
 }
 
 async function processCard(card) {
@@ -50,12 +38,12 @@ async function processCard(card) {
   //   tasks.push(convertAndSave(frontUrl, frontPath));
   // }
   if (foilUrl) {
-    const foilPath = path.join(foilDir, `${fileName}.webp`);
-    tasks.push(convertAndSave(foilUrl, foilPath));
+    const foilPath = path.join(foilDir, `${fileName}.png`);
+    tasks.push(downloadImage(foilUrl, foilPath));
   }
   if (etchUrl) {
-    const etchPath = path.join(etchDir, `${fileName}.webp`);
-    tasks.push(convertAndSave(etchUrl, etchPath));
+    const etchPath = path.join(etchDir, `${fileName}.png`);
+    tasks.push(downloadImage(etchUrl, etchPath));
   }
 
   await Promise.all(tasks);

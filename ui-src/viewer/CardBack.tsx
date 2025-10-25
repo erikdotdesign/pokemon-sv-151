@@ -2,7 +2,7 @@ import * as THREE from "three";
 import { useLoader } from "@react-three/fiber";
 import RoundedPlaneGeometry from "./RoundedPlaneGeometry";
 
-import BACK_IMAGE from "../images/back.png";
+import BACK_IMAGE from "../images_webp/back.webp";
 
 const CardBack = ({
   width,

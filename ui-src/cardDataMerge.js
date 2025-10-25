@@ -26,10 +26,23 @@ for (const card of malieData) {
   const frontImage = tcgImageMap.get(collector_number.numeric);
   const foilPath = path.join(foilDir, `${cardId}.webp`);
   const etchPath = path.join(etchDir, `${cardId}.webp`);
-  const oldImages = card.images.tcgl.png;
-  const newImages = { front: frontImage };
-  if (oldImages.foil) newImages.foil = foilPath;
-  if (oldImages.etch) newImages.etch = etchPath;
+  const malieImages = card.images.tcgl.png;
+  let newImages = { front: frontImage };
+  if (malieImages.foil || malieImages.etch) newImages.fallBack = {};
+  if (malieImages.foil) {
+    newImages = { 
+      ...newImages, 
+      foil: malieImages.foil,
+      fallBack: { ...newImages.fallBack, foil: foilPath }
+    }
+  }
+  if (malieImages.etch) {
+    newImages = { 
+      ...newImages, 
+      etch: malieImages.etch,
+      fallBack: { ...newImages.fallBack, etch: etchPath }
+    }
+  };
   card.images = newImages;
 }
 

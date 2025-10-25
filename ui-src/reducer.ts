@@ -1,6 +1,8 @@
 export type CardFoilType = "SV_ULTRA" | "SUN_PILLAR" | "FLAT_SILVER" | "SV_HOLO";
 export type CardFoilMask = "ETCHED" | "HOLO" | "REVERSE";
 
+export type CardRarity = "COMMON" | "UNCOMMON" | "RARE" | "DOUBLE_RARE" | "ULTRA_RARE" | "ILLUSTRATION_RARE" | "SPECIAL_ILLUSTRATION_RARE" | "HYPER_RARE";
+
 export type CardText =
   | {
       kind: "ATTACK";
@@ -41,7 +43,7 @@ export type Card = {
     numeric: number;
   };
   rarity: {
-    designation: string;
+    designation: CardRarity;
     icon?: string;
   };
   copyright: {
@@ -81,7 +83,7 @@ export type Card = {
 export type Pack = {
   cards: string[];
   opened: boolean;
-  activeIndex: number;
+  cardIndex: number;
 }
 
 export type Packs = {
@@ -107,7 +109,8 @@ export type State = {
 export type Action = 
   | { type: "HYDRATE_STATE"; state: State }
   | { type: "SET_VIEW"; view: View }
-  | { type: "SET_CURRENT_PACK", cards: string[] }
+  | { type: "SET_NEW_CURRENT_PACK", cards: string[] }
+  | { type: "SET_CURRENT_PACK_CARD_INDEX", cardIndex: number }
   | { type: "OPEN_CURRENT_PACK" }
   
 
@@ -118,14 +121,24 @@ const reducer = (state: State, action: Action): State => {
       ...state, 
       view: action.view
     };
-    case "SET_CURRENT_PACK": return { 
+    case "SET_CURRENT_PACK_CARD_INDEX": return { 
+      ...state, 
+      packs: {
+        ...state.packs,
+        current: {
+          ...state.packs.current,
+          cardIndex: action.cardIndex
+        }
+      }
+    };
+    case "SET_NEW_CURRENT_PACK": return { 
       ...state, 
       packs: {
         ...state.packs,
         current: {
           cards: action.cards,
           opened: false,
-          activeIndex: 0
+          cardIndex: 0
         }
       }
     };

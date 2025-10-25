@@ -1,6 +1,6 @@
 import { useState, useRef, useEffect, useReducer } from "react";
 import reducer, { Action, Card, State } from "./reducer";
-import { getRandomCardIds } from "./selectors";
+import { getPackCards, getRandomRareCards } from "./selectors";
 import cardData from "./data/cards_merged.json";
 import Canvas from "./Canvas";
 import "./App.css";
@@ -14,9 +14,9 @@ const App = () => {
     view: "packs",
     packs: {
       current: {
-        cards: getRandomCardIds({ cardsById: CARDS_BY_ID } as State, 10),
+        cards: getRandomRareCards({ cardsById: CARDS_BY_ID } as State),
         opened: false,
-        activeIndex: 0
+        cardIndex: 0
       },
       available: Infinity,
       lastOpened: null

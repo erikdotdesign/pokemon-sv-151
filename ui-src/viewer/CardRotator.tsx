@@ -16,8 +16,8 @@ const CardRotator = ({
 }: {
   width: number;
   height: number;
-  flipped: boolean;
-  setFlipped: (flipped: boolean) => void;
+  flipped?: boolean;
+  setFlipped?: (flipped: boolean) => void;
   padding?: number;
   reversed?: boolean;
   initialFlipped?: boolean;
