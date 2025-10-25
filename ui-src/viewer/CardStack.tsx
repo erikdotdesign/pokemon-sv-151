@@ -33,7 +33,7 @@ const AnimatedCard = ({
   }
 
   return (
-    <animated.group position={pos} onClick={handleClick}>
+    <animated.group position={pos as unknown as [number, number, number]} onClick={handleClick}>
       <Card cursorPos={cursorPos} card={card} />
     </animated.group>
   );

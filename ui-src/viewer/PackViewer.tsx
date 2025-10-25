@@ -38,10 +38,10 @@ const PackViewer = ({
 
   return (
     <>
-      <a.group {...cardsSpring}>
+      <a.group {...cardsSpring as any}>
         <CardStack state={state} dispatch={dispatch} setPackViewed={setPackViewed} />
       </a.group>
-      <a.group {...packSpring}>
+      <a.group {...packSpring as any}>
         <Pack state={state} dispatch={dispatch} />
       </a.group>
     </>

@@ -107,7 +107,7 @@ export type State = {
 };
 
 export type Action = 
-  | { type: "HYDRATE_STATE"; state: State }
+  | { type: "HYDRATE_STATE"; state: State | Partial<State> }
   | { type: "SET_VIEW"; view: View }
   | { type: "SET_NEW_CURRENT_PACK", cards: string[] }
   | { type: "SET_CURRENT_PACK_CARD_INDEX", cardIndex: number }

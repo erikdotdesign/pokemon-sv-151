@@ -1,7 +1,8 @@
-import { useState, useRef, useEffect, useReducer } from "react";
-import reducer, { Action, Card, State } from "./reducer";
+import { useRef, useReducer } from "react";
+import reducer, { Card, State } from "./reducer";
 import { getPackCards } from "./selectors";
 import cardData from "./data/cards_merged.json";
+import usePluginStorage from "./usePluginStorage";
 import Canvas from "./Canvas";
 import "./App.css";
 
@@ -29,6 +30,11 @@ const App = () => {
   });
 
   const canvasRef = useRef<HTMLCanvasElement>(null);
+
+  usePluginStorage(
+    state, 
+    dispatch
+  );
   
   return (
     <main className="c-app">
