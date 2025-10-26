@@ -19,18 +19,18 @@ const Viewer = ({
       ref={canvasRef} 
       shadows 
       gl={{ stencil: true }}>
-      <color attach="background" args={['#eee']} />
-      <fog attach="fog" args={['#eee', 0, 20]} />
+      <color attach="background" args={['#EBF3FF']} />
+      <fog attach="fog" args={['#EBF3FF', 0, 25]} />
       <ambientLight intensity={2} />
       <directionalLight
-        position={[4, 8, 6]}
-        intensity={0.6}
+        position={[8, 12, 8]}
+        intensity={2.0}
         castShadow
         shadow-mapSize-width={1024}
         shadow-mapSize-height={1024} />
       <directionalLight
-        position={[-4, 8, 6]}
-        intensity={0.6}
+        position={[-8, 12, 8]}
+        intensity={2.0}
         castShadow
         shadow-mapSize-width={1024}
         shadow-mapSize-height={1024} />

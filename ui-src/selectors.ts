@@ -10,7 +10,7 @@ export const getCurrentPackIds = (state: State) =>
   state.packs.current.cards;
 
 export const getCollectionIds = (state: State) =>
-  state.collection.cards;
+  Object.keys(state.collection.cards);
 
 // --- Data accessors ---
 
@@ -33,57 +33,6 @@ export const getActivePackCard = (state: State) => {
   return cards.length > 0
     ? state.cardsById[cards[cardIndex]]
     : null;
-};
-
-const cardRarities: CardRarity[] = [
-  "HYPER_RARE",
-  "SPECIAL_ILLUSTRATION_RARE",
-  "ILLUSTRATION_RARE",
-  "ULTRA_RARE",
-  "DOUBLE_RARE",
-  "RARE",
-  "UNCOMMON",
-  "COMMON",
-];
-
-// approximate per-card probabilities
-const perCardProbabilities: Record<CardRarity, number> = {
-  HYPER_RARE: 0.00196,
-  SPECIAL_ILLUSTRATION_RARE: 0.003125,
-  ILLUSTRATION_RARE: 0.00833,
-  ULTRA_RARE: 0.00625,
-  DOUBLE_RARE: 0.0125,
-  RARE: 0.1,
-  UNCOMMON: 0.3,
-  COMMON: 0.567795,
-};
-
-export const getRandomCardIds = (state: State, count = 10) => {
-  const allCards = Object.values(state.cardsById);
-  const result: string[] = [];
-
-  for (let i = 0; i < count; i++) {
-    let picked: Card | undefined;
-
-    while (!picked) {
-      const rnd = Math.random();
-      let cumulative = 0;
-      for (const rarity of cardRarities) {
-        cumulative += perCardProbabilities[rarity] || 0;
-        if (rnd < cumulative) {
-          const candidates = allCards.filter(c => c.rarity.designation === rarity);
-          if (candidates.length > 0) {
-            picked = candidates[Math.floor(Math.random() * candidates.length)];
-            break;
-          }
-        }
-      }
-    }
-
-    result.push(picked.ext.tcgl.cardID);
-  }
-
-  return result;
 };
 
 export const getPackCards = (state: State): string[] => {

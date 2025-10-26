@@ -1,3 +1,5 @@
+import { addCardsToCollection, mergeState } from "./reducerUtils";
+
 export type CardFoilType = "SV_ULTRA" | "SUN_PILLAR" | "FLAT_SILVER" | "SV_HOLO";
 export type CardFoilMask = "ETCHED" | "HOLO" | "REVERSE";
 
@@ -81,6 +83,7 @@ export type Card = {
 }
 
 export type Pack = {
+  id: string;
   cards: string[];
   opened: boolean;
   cardIndex: number;
@@ -95,7 +98,7 @@ export type Packs = {
 export type View = "collection" | "packs";
 
 export type Collection = {
-  cards: string[];
+  cards: Record<string, number>;
 }
 
 export type State = {
@@ -116,7 +119,8 @@ export type Action =
 
 const reducer = (state: State, action: Action): State => {
   switch (action.type) {
-    case "HYDRATE_STATE": return { ...state, ...action.state, hydrated: true };
+    case "HYDRATE_STATE":
+      return mergeState(state, action.state);
     case "SET_VIEW": return { 
       ...state, 
       view: action.view
@@ -136,6 +140,7 @@ const reducer = (state: State, action: Action): State => {
       packs: {
         ...state.packs,
         current: {
+          id: `pack_${Date.now()}_${Math.floor(Math.random() * 1_000_000)}`,
           cards: action.cards,
           opened: false,
           cardIndex: 0
@@ -144,12 +149,10 @@ const reducer = (state: State, action: Action): State => {
     };
     case "OPEN_CURRENT_PACK": {
       if (state.packs.available <= 0) return state;
+      const newCollection = addCardsToCollection(state.collection, state.packs.current.cards);
       return {
         ...state,
-        collection: {
-          ...state.collection,
-          cards: Array.from(new Set([...state.collection.cards, ...state.packs.current.cards])),
-        },
+        collection: newCollection,
         packs: {
           ...state.packs,
           current: {

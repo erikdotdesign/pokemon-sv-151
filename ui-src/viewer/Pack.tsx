@@ -1,26 +1,20 @@
 import { useState, Suspense } from "react";
 import { Action, State } from "../reducer";
-import CardRotator from "./CardRotator";
+import CardRotator from "./Rotator";
 import PackModel from "./PackModel";
 
 const Pack = ({ 
   state,
+  rotator = true,
   dispatch
 }: { 
   state: State;
+  rotator?: boolean;
   dispatch: (action: Action) => void;
 }) => {
-  const [cursorPos, setCursorPos] = useState({ x: 0, y: 0 });
-  const aspect = 500 / 980;
-  const width = 2;
-  const height = width / aspect;
-  const hitTargetPadding = 0.6;
   return (
     <CardRotator
-      width={width}
-      height={height}
-      padding={hitTargetPadding}
-      setCursorPos={setCursorPos}
+      disabled={!rotator}
       onClick={() => dispatch({
         type: "OPEN_CURRENT_PACK"
       })}>

@@ -12,6 +12,7 @@ import cardFrontFragment from "../shaders/fragment/cardFront.frag?raw";
 import NOISE_IMAGE from "../images_webp/noise.webp";
 import GRADIENT_IMAGE from "../images_webp/gradient.webp";
 import BANDS_IMAGE from "../images_webp/bands.webp";
+import { RotatorHandle } from "./Rotator";
 
 const FOIL_IMAGES = import.meta.glob('../images_webp/foil/*.webp', { eager: true, import: 'default' });
 const ETCH_IMAGES = import.meta.glob('../images_webp/etch/*.webp', { eager: true, import: 'default' });
@@ -63,14 +64,14 @@ const CardFront = ({
   height,
   depth,
   cornerRadius,
-  cursorPos
+  rotatorRef
 }: {
   card: any;
   width: number;
   height: number;
   depth: number;
   cornerRadius: number;
-  cursorPos: {x: number; y: number};
+  rotatorRef: React.RefObject<RotatorHandle | null>;
 }) => {
   const matRef = useRef<any>(null);
 
@@ -84,18 +85,22 @@ const CardFront = ({
   // ----------------------
   // Cursor pointer update (avoid recreating vector)
   // ----------------------
-  const pointerRef = useRef(cursorPos);
-  pointerRef.current = cursorPos;
+  // const pointerRef = useRef(cursorPos);
+  // pointerRef.current = cursorPos;
 
   useFrame(() => {
-    if (matRef.current) {
-      matRef.current.uPointer.set(pointerRef.current.x, pointerRef.current.y);
+    if (matRef.current && rotatorRef.current) {
+      const { cursorPos } = rotatorRef.current;
+      matRef.current.uPointer.set(cursorPos.current.x, cursorPos.current.y);
     }
   });
 
   return (
     <mesh position={[0, 0, depth]}>
-      <RoundedPlaneGeometry width={width} height={height} cornerRadius={cornerRadius} />
+      <RoundedPlaneGeometry 
+        width={width} 
+        height={height} 
+        cornerRadius={cornerRadius} />
       <cardFrontMaterial
         ref={matRef}
         uFoilType={card.foil ? CARD_FOIL_MAP[card.foil.type] : 0}
@@ -105,10 +110,7 @@ const CardFront = ({
         uTextureEtch={etchTexture}
         uTextureFoil={foilTexture}
         uTextureGradient={gradientTexture}
-        uTextureBands={bandsTexture}
-        depthTest={false}
-        depthWrite={false}
-        transparent={false} />
+        uTextureBands={bandsTexture} />
     </mesh>
   );
 }

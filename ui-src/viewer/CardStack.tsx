@@ -1,85 +1,58 @@
-import { useState } from "react";
-import { animated, useSpring } from "@react-spring/three";
-import { Action, State, Card as CardType } from "../reducer";
-import { getCardById } from "../selectors";
-import CardRotator from "./CardRotator";
-import Card, { CARD_DEPTH, CARD_WIDTH, CARD_HEIGHT } from "./Card";
-
-const AnimatedCard = ({ 
-  card, 
-  position, 
-  cursorPos, 
-  isTop,
-  onExitComplete 
-}: {
-  card: CardType;
-  position: [number, number, number];
-  cursorPos: { x: number; y: number };
-  isTop: boolean;
-  onExitComplete: () => void;
-}) => {
-  const [exiting, setExiting] = useState(false);
-
-  const { pos } = useSpring({
-    pos: exiting ? [10, 0, position[2]] : position,
-    config: { mass: 1, tension: 220, friction: 30, duration: 350 },
-    onRest: () => {
-      if (exiting && onExitComplete) onExitComplete();
-    },
-  });
-
-  const handleClick = () => {
-    if (isTop) setExiting(true);
-  }
-
-  return (
-    <animated.group position={pos as unknown as [number, number, number]} onClick={handleClick}>
-      <Card cursorPos={cursorPos} card={card} />
-    </animated.group>
-  );
-};
+import { useRef } from "react";
+import { a, useSpring } from "@react-spring/three";
+import { Action, State } from "../reducer";
+import { CARD_DEPTH } from "./Card";
+import Rotator, { RotatorHandle } from "./Rotator";
+import CardStackCard from "./CardStackCard";
 
 const CardStack = ({ 
   state,
+  rotator = true,
   dispatch,
   setPackViewed
 }: { 
   state: State;
+  rotator?: boolean;
   dispatch: (action: Action) => void;
   setPackViewed: (packedViewed: boolean) => void;
 }) => {
-  const [cursorPos, setCursorPos] = useState({ x: 0, y: 0 });
-
-  const { cards, cardIndex } = state.packs.current;
-  const visibleCards = cards.slice(cardIndex); // only show cards from current index onward
+  const rotatorRef = useRef<RotatorHandle>(null);
+  const { current: currentPack } = state.packs;
+  const { cards, cardIndex: currentCardIndex, id: currentPackId } = currentPack;
 
   const handleExitComplete = () => {
-    dispatch({ type: "SET_CURRENT_PACK_CARD_INDEX", cardIndex: cardIndex + 1 });
-    if (visibleCards.length <= 1) {
+    const nextIndex = currentCardIndex + 1;
+    dispatch({ type: "SET_CURRENT_PACK_CARD_INDEX", cardIndex: nextIndex });
+
+    if (nextIndex >= cards.length) { // last card
       setPackViewed(true);
     }
   };
 
+  // Shift card group forward by hidden card length
+  const { position } = useSpring({
+    position: [0, 0, currentCardIndex * CARD_DEPTH],
+    config: { mass: 1, tension: 120, friction: 20 },
+  });
+
   return (
-    <CardRotator
-      width={CARD_WIDTH}
-      height={CARD_HEIGHT}
-      padding={0.6}
-      setCursorPos={setCursorPos}>
-      {visibleCards.reverse().map((id, i) => {
-        const isTop = i === visibleCards.length - 1;
-        const card = getCardById(state, id);
-        return (
-          <AnimatedCard
-            key={id}
-            card={card}
-            position={[0, 0, -i * (CARD_DEPTH / 2 - 0.18)]}
-            cursorPos={cursorPos}
-            isTop={isTop}
-            onExitComplete={handleExitComplete} />
-        );
-      })}
-    </CardRotator>
+    <Rotator 
+      ref={rotatorRef}
+      disabled={!rotator}>
+      <a.group position={position as unknown as [number, number, number]}>
+        {cards.map((id, i) => {
+          return (
+            <CardStackCard
+              key={`${currentPackId}-${id}-${i}`}
+              id={id}
+              renderIndex={i}
+              state={state}
+              rotatorRef={rotatorRef}
+              onExitComplete={handleExitComplete} />
+          );
+        })}
+      </a.group>
+    </Rotator>
   );
 };
 
