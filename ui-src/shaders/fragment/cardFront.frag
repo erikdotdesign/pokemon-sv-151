@@ -21,9 +21,11 @@ uniform sampler2D uTextureFoil;
 uniform sampler2D uTextureEtch;
 uniform sampler2D uTextureGradient;
 uniform sampler2D uTextureBands;
+uniform bool uUsePostProcessing;
 
 #include "../_chunk/rotate.glsl";
 #include "../_chunk/PI.glsl";
+#include "../_chunk/linear-to-srgb.glsl";
 
 #include "../_chunk/blend/multiply.glsl";
 #include "../_chunk/blend/color-burn.glsl";
@@ -67,8 +69,8 @@ vec4 computeFoilEffect(vec4 base, vec2 uv, float blendInterpolation1, float blen
   // Gradient
   float gradientStepUv = 1.25;
   vec2 gradientUv = vec2(
-    rotateUv.x + (1.0 - uPointer.x * gradientStepUv - gradientStepUv),
-    rotateUv.y + (1.0 - uPointer.y * gradientStepUv - gradientStepUv)
+    rotateUv.x + (1.0 - (uPointer.x * 0.75) * gradientStepUv - gradientStepUv),
+    rotateUv.y + (1.0 - (uPointer.y * 0.75) * gradientStepUv - gradientStepUv)
   );
   // Horizontal gradient for SV Holo
   // if (uFoilType == 2) {
@@ -138,17 +140,19 @@ vec4 computeFoilEffect(vec4 base, vec2 uv, float blendInterpolation1, float blen
   // Foil bands 1
   finalColor = vec4(blendColorDodge(finalColor.rgb, noisyBands1.rgb, blendInterpolation2), 1.0);
   finalColor = vec4(blendColorDodge(finalColor.rgb, noisyBands1.rgb, blendInterpolation2), 1.0);
+  finalColor = vec4(blendColorDodge(finalColor.rgb, maskedGradient1.rgb, blendInterpolation2), 1.0);
 
   // Foils bands 2
   if (uFoilType != 1) {
     finalColor = vec4(blendColorDodge(finalColor.rgb, noisyBands2.rgb, blendInterpolation2), 1.0);
     finalColor = vec4(blendColorDodge(finalColor.rgb, noisyBands2.rgb, blendInterpolation2), 1.0);
+    finalColor = vec4(blendColorDodge(finalColor.rgb, maskedGradient2.rgb, blendInterpolation2), 1.0);
   }
 
   // Foil etch
   if (uMaskType == 3) {
+    finalColor = vec4(blendColorDodge(finalColor.rgb, maskedGradient3.rgb, blendInterpolation2), 1.0);
     finalColor = vec4(blendColorBurn(finalColor.rgb, maskedGradient3.rgb, blendInterpolation2), 1.0);
-    finalColor = vec4(blendScreen(finalColor.rgb, maskedGradient3.rgb, blendInterpolation2), 1.0);
   }
   
   // Foil mask
@@ -173,6 +177,10 @@ void main() {
   // Apply foil effects
   if (uFoilType != 0) {
     finalColor = computeFoilEffect(finalColor, uv, blendInterpolation1, 0.5);
+  }
+
+  if (!uUsePostProcessing) {
+    finalColor = vec4(linearTosRGB(finalColor.rgb), finalColor.a);
   }
   
   gl_FragColor = finalColor;

@@ -13,7 +13,7 @@ const springConfig = { mass: 1, tension: 170, friction: 26 };
 
 const useCombinedPosition = (y: any, z: any) => to([y, z], (yy, zz) => [0, yy, zz]);
 
-const PackViewer = ({ 
+const PackPuller = ({ 
   state, 
   dispatch,
   packRef
@@ -108,4 +108,4 @@ const PackViewer = ({
   );
 };
 
-export default PackViewer;
+export default PackPuller;

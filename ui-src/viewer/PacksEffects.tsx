@@ -5,45 +5,45 @@ import { State } from "../reducer";
 import { useEffect, useState } from "react";
 import { BlendFunction } from "postprocessing";
 
+import { usePostProcessing } from "./usePostProcessing";
+
 const PacksEffects = ({ 
   state,
-  floorRef,
   packRef,
   lightRefs
 }: { 
   state: State;
-  floorRef: React.RefObject<THREE.Mesh | null>;
   packRef: React.RefObject<THREE.Mesh | null>;
   lightRefs: React.RefObject<THREE.Light | null>[];
 }) => {
-  const { scene } = useThree();
+  const postProcessing = usePostProcessing();
 
   const [bloomSelection, setBloomSelection] = useState<THREE.Object3D[]>([]);
   const [bloomLights, setBloomLights] = useState<THREE.Light[]>([]);
 
   // Wait until refs are populated
   useEffect(() => {
-    const floor = floorRef.current;
+    // const floor = floorRef.current;
     const pack = packRef.current;
     const lights = lightRefs.map(l => l.current).filter(Boolean) as THREE.Light[];
 
-    if (floor && pack && lights.length) {
-      setBloomSelection([floor, pack]);
+    if (pack && lights.length) {
+      setBloomSelection([pack]);
       setBloomLights(lights);
     }
-  }, [floorRef, packRef, lightRefs]);
+  }, [packRef, lightRefs]);
 
   if (bloomLights.length === 0 || bloomSelection.length === 0) return null;
 
   return (
-    <EffectComposer enabled={false}>
+    postProcessing &&
+    <EffectComposer>
       <SelectiveBloom
         lights={bloomLights}
         selection={bloomSelection}
-        intensity={0} // The bloom intensity.
-        luminanceThreshold={1} // luminance threshold. Raise this value to mask out darker elements in the scene.
-        luminanceSmoothing={0.05} // smoothness of the luminance threshold. Range is [0, 1]
-      />
+        intensity={1}
+        luminanceThreshold={0.8}
+        luminanceSmoothing={0.025} />
     </EffectComposer>
   );
 };

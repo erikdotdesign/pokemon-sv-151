@@ -2,12 +2,14 @@ import { a, useSpring } from "@react-spring/three";
 import { MeshReflectorMaterial } from "@react-three/drei";
 import { State } from "../reducer";
 import { forwardRef } from "react";
+import { usePostProcessing } from "./usePostProcessing";
 
 const Floor = forwardRef(({
   state
 }: {
   state: State;
 }, ref) => {
+  const postProcessing = usePostProcessing();
   const { position } = useSpring({
     position: state.packs.current.opened ? [0,-1.5,0] : [0,-2.1,0],
     config: { mass: 1, tension: 170, friction: 26 }
@@ -19,7 +21,7 @@ const Floor = forwardRef(({
       position={position as unknown as [number, number, number]}>
       <planeGeometry args={[50, 50]} />
       <MeshReflectorMaterial
-        color="#66A6FF" />
+        color={postProcessing ? "#999999" : "#F2F4FA"} />
     </a.mesh>
   );
 });

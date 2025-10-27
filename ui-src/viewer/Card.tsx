@@ -23,7 +23,7 @@ const Card = ({
   rotatorRef: React.RefObject<RotatorHandle | null>;
 }) => {
   return (
-    <group>
+    <>
       <CardBack 
         width={CARD_WIDTH} 
         height={CARD_HEIGHT} 
@@ -41,7 +41,7 @@ const Card = ({
         height={CARD_HEIGHT} 
         depth={CARD_FRONT_FACE_DEPTH} 
         cornerRadius={CARD_CORNER_RADIUS} />
-    </group>
+    </>
   );
 };
 

@@ -2,17 +2,19 @@ import { Action, State } from "../reducer";
 
 import PackPuller from "./PackPuller";
 import Floor from "./Floor";
+import PacksEffects from "./PacksEffects";
 import { useRef } from "react";
 import { AmbientLight, DirectionalLight, Mesh } from "three";
+import { usePostProcessing } from "./usePostProcessing";
 
-const Packs = ({ 
+const PacksViewer = ({ 
   state,
   dispatch
 }: { 
   state: State;
   dispatch: (action: Action) => void;
 }) => {
-  const floorRef = useRef<Mesh>(null);
+  const postProcessing = usePostProcessing();
   const packRef = useRef<Mesh>(null);
   const ambientLightRef = useRef<AmbientLight>(null);
   const dirLightRef1 = useRef<DirectionalLight>(null);
@@ -20,8 +22,8 @@ const Packs = ({
 
   return (
     <>
-      <color attach="background" args={['#EBF3FF']} />
-      <fog attach="fog" args={['#EBF3FF', 0, 25]} />
+      <color attach="background" args={[postProcessing ? "#E1E5EF" : '#E2E6F0']} />
+      <fog attach="fog" args={[postProcessing ? "#E1E5EF" : '#E2E6F0', 0, 25]} />
       <ambientLight ref={ambientLightRef} intensity={2} />
       <directionalLight
         ref={dirLightRef1}
@@ -41,9 +43,13 @@ const Packs = ({
         packRef={packRef}
         state={state} 
         dispatch={dispatch} />
-      <Floor ref={floorRef} state={state} />
+      <Floor state={state} />
+      <PacksEffects 
+        lightRefs={[ambientLightRef, dirLightRef1, dirLightRef2]}
+        packRef={packRef}
+        state={state} />
     </>
   );
 };
 
-export default Packs;
+export default PacksViewer;

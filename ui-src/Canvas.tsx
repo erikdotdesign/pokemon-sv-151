@@ -1,5 +1,6 @@
 import { Action, State } from "./reducer";
 import Viewer from "./viewer/Viewer";
+import EffectsCompTest from "./viewer/EffectsCompTest";
 import './Canvas.css';
 
 const Canvas = ({
@@ -17,6 +18,9 @@ const Canvas = ({
         canvasRef={canvasRef}
         state={state}
         dispatch={dispatch} />
+      {/* <EffectsCompTest
+        canvasRef={canvasRef}
+        state={state} /> */}
     </div>
   );
 };

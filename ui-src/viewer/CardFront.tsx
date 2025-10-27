@@ -13,6 +13,7 @@ import NOISE_IMAGE from "../images_webp/noise.webp";
 import GRADIENT_IMAGE from "../images_webp/gradient.webp";
 import BANDS_IMAGE from "../images_webp/bands.webp";
 import { RotatorHandle } from "./Rotator";
+import { usePostProcessing } from "./usePostProcessing";
 
 const FOIL_IMAGES = import.meta.glob('../images_webp/foil/*.webp', { eager: true, import: 'default' });
 const ETCH_IMAGES = import.meta.glob('../images_webp/etch/*.webp', { eager: true, import: 'default' });
@@ -22,6 +23,7 @@ const ETCH_IMAGES = import.meta.glob('../images_webp/etch/*.webp', { eager: true
 // ----------------------
 const noiseTexture = new THREE.TextureLoader().load(NOISE_IMAGE);
 const gradientTexture = new THREE.TextureLoader().load(GRADIENT_IMAGE);
+gradientTexture.colorSpace = THREE.SRGBColorSpace;
 const bandsTexture = new THREE.TextureLoader().load(BANDS_IMAGE);
 
 export const CARD_FOIL_MAP = { 
@@ -51,6 +53,7 @@ const CardFrontMaterial = shaderMaterial(
     uTextureGradient: null,
     uTextureBands: null,
     uPointer: new THREE.Vector2(0.5, 0.5),
+    uUsePostProcessing: true
   },
   cardFrontVertex,
   cardFrontFragment,
@@ -73,9 +76,11 @@ const CardFront = ({
   cornerRadius: number;
   rotatorRef: React.RefObject<RotatorHandle | null>;
 }) => {
+  const postProcessing = usePostProcessing();
   const matRef = useRef<any>(null);
 
   const cardTexture = useMemo(() => new THREE.TextureLoader().load(card.images.front), [card.images.front]);
+  cardTexture.colorSpace = THREE.SRGBColorSpace;
   const foilTexture = useTextureWithFallback(card.images.foil, FOIL_IMAGES[`../images_webp/foil/${card.ext.tcgl.cardID}.webp`]);
   const etchTexture = useTextureWithFallback(card.images.etch, ETCH_IMAGES[`../images_webp/etch/${card.ext.tcgl.cardID}.webp`]);
 
@@ -101,7 +106,8 @@ const CardFront = ({
         uTextureEtch={etchTexture}
         uTextureFoil={foilTexture}
         uTextureGradient={gradientTexture}
-        uTextureBands={bandsTexture} />
+        uTextureBands={bandsTexture}
+        uUsePostProcessing={postProcessing} />
     </mesh>
   );
 }
