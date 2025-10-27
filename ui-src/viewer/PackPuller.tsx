@@ -3,7 +3,7 @@ import * as THREE from "three";
 import { useFrame } from "@react-three/fiber";
 import { a, useSpring, to } from "@react-spring/three";
 import { Action, State } from "../reducer";
-import { getPackCards } from "../selectors";
+import { getPackCards, getGodPack } from "../selectors";
 
 import Pack from "./Pack";
 import CardStack from "./CardStack";
@@ -13,7 +13,15 @@ const springConfig = { mass: 1, tension: 170, friction: 26 };
 
 const useCombinedPosition = (y: any, z: any) => to([y, z], (yy, zz) => [0, yy, zz]);
 
-const PackViewer = ({ state, dispatch }: { state: State; dispatch: (action: Action) => void }) => {
+const PackViewer = ({ 
+  state, 
+  dispatch,
+  packRef
+}: { 
+  state: State; 
+  dispatch: (action: Action) => void;
+  packRef: React.RefObject<THREE.Mesh | null>;
+}) => {
   const { opened } = state.packs.current;
   const [packRecycle, setPackRecycle] = useState(false);
   const [packViewed, setPackViewed] = useState(false);
@@ -52,7 +60,7 @@ const PackViewer = ({ state, dispatch }: { state: State; dispatch: (action: Acti
     immediate: packViewed,
     onRest: () => {
       if (packViewed) {
-        dispatch({ type: "SET_NEW_CURRENT_PACK", cards: getPackCards(state) });
+        dispatch({ type: "SET_NEW_CURRENT_PACK", cards: getGodPack(state) });
         setPackViewed(false);
         setPackRecycle(false);
       }
@@ -94,7 +102,7 @@ const PackViewer = ({ state, dispatch }: { state: State; dispatch: (action: Acti
         rotation={packRotationSpring.rotation}
         position={combinedPackPosition}
         scale={packRotationSpring.scale}>
-        <Pack rotator={!opened} state={state} dispatch={dispatch} />
+        <Pack packRef={packRef} rotator={!opened} state={state} dispatch={dispatch} />
       </a.group>
     </>
   );

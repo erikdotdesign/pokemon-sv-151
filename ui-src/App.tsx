@@ -1,6 +1,6 @@
 import { useRef, useReducer } from "react";
 import reducer, { Card, State } from "./reducer";
-import { getPackCards } from "./selectors";
+import { getPackCards, getGodPack } from "./selectors";
 import cardData from "./data/cards_merged.json";
 import usePluginStorage from "./usePluginStorage";
 import Canvas from "./Canvas";
@@ -15,7 +15,7 @@ const App = () => {
     view: "packs",
     packs: {
       current: {
-        cards: getPackCards({ cardsById: CARDS_BY_ID } as State),
+        cards: getGodPack({ cardsById: CARDS_BY_ID } as State),
         opened: false,
         cardIndex: 0
       },

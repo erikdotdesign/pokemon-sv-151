@@ -35,6 +35,32 @@ export const getActivePackCard = (state: State) => {
     : null;
 };
 
+export const getGodPack = (state: State): string[] => {
+  const allCards = Object.values(state.cardsById);
+  const result: string[] = [];
+
+  // Pick a random card from a given filter
+  const pickRandom = (filterFn: (c: Card) => boolean): Card => {
+    const candidates = allCards.filter(filterFn);
+    if (!candidates.length) throw new Error("No candidates found for pickRandom filter");
+    return candidates[Math.floor(Math.random() * candidates.length)];
+  };
+
+  // Number of cards in a standard pack
+  const PACK_SIZE = 10;
+
+  for (let i = 0; i < PACK_SIZE; i++) {
+    const specialCard = pickRandom(c =>
+      ["ILLUSTRATION_RARE", "SPECIAL_ILLUSTRATION_RARE", "DOUBLE_RARE", "ULTRA_RARE", "HYPER_RARE"].includes(
+        c.rarity?.designation || ""
+      )
+    );
+    result.push(specialCard.ext.tcgl.cardID);
+  }
+
+  return result;
+};
+
 export const getPackCards = (state: State): string[] => {
   const allCards = Object.values(state.cardsById);
   const result: string[] = [];

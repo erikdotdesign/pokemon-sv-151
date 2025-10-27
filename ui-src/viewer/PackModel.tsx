@@ -1,8 +1,9 @@
 import { useGLTF } from '@react-three/drei';
 
 import MODEL_PATH from "../models/pack.glb";
+import { forwardRef } from 'react';
 
-const PackModel = () => {
+const PackModel = forwardRef((props, ref) => {
   const { nodes, materials } = useGLTF(MODEL_PATH);
   return (
     <group 
@@ -10,6 +11,7 @@ const PackModel = () => {
       rotation={[0, Math.PI, Math.PI / 2]} 
       scale={0.0155}>
       <mesh
+        ref={ref}
         castShadow
         receiveShadow
         geometry={nodes.Cube002_body_0.geometry}
@@ -19,14 +21,14 @@ const PackModel = () => {
         <meshStandardMaterial
           {...materials.body}
           color="#ffffff"
-          toneMapped={false}
+          // toneMapped={false}
           fog={false}
           metalness={0.1}
           roughness={0.2} />
       </mesh>
     </group>
   );
-};
+});
 
 useGLTF.preload(MODEL_PATH);
 

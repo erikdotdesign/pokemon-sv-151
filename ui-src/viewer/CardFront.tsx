@@ -6,8 +6,8 @@ import { shaderMaterial } from "@react-three/drei";
 
 import useTextureWithFallback from "./useTextureWithFallback";
 
-import cardFrontVertex from "../shaders/vertex/cardFront.vert?raw";
-import cardFrontFragment from "../shaders/fragment/cardFront.frag?raw";
+import cardFrontVertex from "../shaders/vertex/cardFront.vert";
+import cardFrontFragment from "../shaders/fragment/cardFront.frag";
 
 import NOISE_IMAGE from "../images_webp/noise.webp";
 import GRADIENT_IMAGE from "../images_webp/gradient.webp";
@@ -53,7 +53,7 @@ const CardFrontMaterial = shaderMaterial(
     uPointer: new THREE.Vector2(0.5, 0.5),
   },
   cardFrontVertex,
-  cardFrontFragment
+  cardFrontFragment,
 );
 
 extend({ CardFrontMaterial });
@@ -75,18 +75,9 @@ const CardFront = ({
 }) => {
   const matRef = useRef<any>(null);
 
-  // ----------------------
-  // Load card-specific textures with memoization
-  // ----------------------
   const cardTexture = useMemo(() => new THREE.TextureLoader().load(card.images.front), [card.images.front]);
   const foilTexture = useTextureWithFallback(card.images.foil, FOIL_IMAGES[`../images_webp/foil/${card.ext.tcgl.cardID}.webp`]);
   const etchTexture = useTextureWithFallback(card.images.etch, ETCH_IMAGES[`../images_webp/etch/${card.ext.tcgl.cardID}.webp`]);
-
-  // ----------------------
-  // Cursor pointer update (avoid recreating vector)
-  // ----------------------
-  // const pointerRef = useRef(cursorPos);
-  // pointerRef.current = cursorPos;
 
   useFrame(() => {
     if (matRef.current && rotatorRef.current) {

@@ -1,9 +1,8 @@
 import { Canvas } from "@react-three/fiber";
-import { OrbitControls, ContactShadows } from "@react-three/drei";
+import { OrbitControls } from "@react-three/drei";
 import { Action, State } from "../reducer";
 
-import PackViewer from "./PackViewer";
-import Floor from "./Floor";
+import Packs from "./Packs";
 
 const Viewer = ({ 
   canvasRef,
@@ -19,35 +18,13 @@ const Viewer = ({
       ref={canvasRef} 
       shadows 
       gl={{ stencil: true }}>
-      <color attach="background" args={['#EBF3FF']} />
-      <fog attach="fog" args={['#EBF3FF', 0, 25]} />
-      <ambientLight intensity={2} />
-      <directionalLight
-        position={[8, 12, 8]}
-        intensity={2.0}
-        castShadow
-        shadow-mapSize-width={1024}
-        shadow-mapSize-height={1024} />
-      <directionalLight
-        position={[-8, 12, 8]}
-        intensity={2.0}
-        castShadow
-        shadow-mapSize-width={1024}
-        shadow-mapSize-height={1024} />
       {
         state.view === "packs"
-        ? <PackViewer 
+        ? <Packs 
             state={state} 
             dispatch={dispatch} />
         : null
       }
-      {/* <ContactShadows
-        position={[0, state.packs.current.opened ? -1.75 : -2.25, 0]}
-        scale={10}
-        blur={1}
-        far={10}
-        opacity={0.25} /> */}
-      <Floor state={state} />
       <OrbitControls />
     </Canvas>
   );
