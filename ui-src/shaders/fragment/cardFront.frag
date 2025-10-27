@@ -128,10 +128,16 @@ vec4 computeFoilEffect(vec4 base, vec2 uv, float blendInterpolation1, float blen
   vec4 bands2 = texture2D(uTextureBands, bandsUv2);
 
   // Masked gradients (bands and etch)
+  float gray = dot(gradient.rgb, vec3(0.299, 0.587, 0.114));
   vec3 maskedGradient1 = gradient.rgb * bands1.r;
   vec3 maskedGradient2 = gradient.rgb * bands2.r;
-  float gray = dot(gradient.rgb, vec3(0.299, 0.587, 0.114));
   vec3 maskedGradient3 = vec3(gray) * etch.r;
+  
+  // Remove color from bands for reverse foil
+  if (uFoilType == 1) {
+    maskedGradient1 = vec3(gray) * bands1.r;
+    maskedGradient2 = vec3(gray) * bands2.r;
+  }
 
   // Bands with noise
   vec4 noisyBands1 = vec4(blendLinearLight(maskedGradient1.rgb, noise.rgb, blendInterpolation2), 1.0);

@@ -61,7 +61,7 @@ const PackPuller = ({
     immediate: packViewed,
     onRest: () => {
       if (packViewed) {
-        dispatch({ type: "SET_NEW_CURRENT_PACK", cards: getGodPack(state) });
+        dispatch({ type: "SET_NEW_CURRENT_PACK", cards: getPackCards(state) });
         setPackViewed(false);
         setPackRecycle(false);
       }
@@ -85,7 +85,9 @@ const PackPuller = ({
     if (!opened && hoverRef.current) {
       const t = clock.getElapsedTime();
       const hoverY = Math.sin(t * 1.2) * 0.08;
+      const rotateY = Math.sin(t * 1.2) * 0.05;
       hoverRef.current.position.y += (hoverY - hoverRef.current.position.y) * 0.1;
+      hoverRef.current.rotation.y += (rotateY - hoverRef.current.rotation.y) * 0.1;
     }
   });
 
@@ -99,12 +101,13 @@ const PackPuller = ({
       </a.group>
 
       <a.group 
-        ref={hoverRef} 
         rotation={packRotationSpring.rotation}
         position={combinedPackPosition}
         scale={packRotationSpring.scale}>
-        <Sparkles count={50} size={1} scale={[3, 5, 0]} color={"#fff"} speed={1} />
-        <Pack packRef={packRef} rotator={!opened} state={state} dispatch={dispatch} />
+        <Sparkles position={[0, 0.5, -1]} count={100} size={1} scale={[3, 5, 0]} color={"#fff"} speed={1} />
+        <group ref={hoverRef} >
+          <Pack packRef={packRef} rotator={!opened} state={state} dispatch={dispatch} />
+        </group>
       </a.group>
     </>
   );

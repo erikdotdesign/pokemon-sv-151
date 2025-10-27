@@ -15,7 +15,8 @@ const App = () => {
     view: "packs",
     packs: {
       current: {
-        cards: getGodPack({ cardsById: CARDS_BY_ID } as State),
+        id: "starter",
+        cards: getPackCards({ cardsById: CARDS_BY_ID } as State),
         opened: false,
         cardIndex: 0
       },
@@ -23,7 +24,7 @@ const App = () => {
       lastOpened: null
     },
     collection: {
-      cards: []
+      cards: {}
     },
     cardsById: CARDS_BY_ID,
     hydrated: false
