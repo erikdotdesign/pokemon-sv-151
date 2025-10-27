@@ -1,5 +1,6 @@
 import { useRef } from "react";
 import * as THREE from "three";
+import { Sparkles } from "@react-three/drei";
 import { useFrame } from "@react-three/fiber";
 import { a, useSpring, to } from "@react-spring/three";
 import { Action, State } from "../reducer";
@@ -102,6 +103,7 @@ const PackPuller = ({
         rotation={packRotationSpring.rotation}
         position={combinedPackPosition}
         scale={packRotationSpring.scale}>
+        <Sparkles count={50} size={1} scale={[3, 5, 0]} color={"#fff"} speed={1} />
         <Pack packRef={packRef} rotator={!opened} state={state} dispatch={dispatch} />
       </a.group>
     </>
