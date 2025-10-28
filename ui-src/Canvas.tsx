@@ -1,6 +1,7 @@
 import { Action, State } from "./reducer";
 import Viewer from "./viewer/Viewer";
 import EffectsCompTest from "./viewer/EffectsCompTest";
+import SelectiveBloomTest from "./viewer/SelectiveBloomTest";
 import './Canvas.css';
 
 const Canvas = ({
@@ -21,6 +22,7 @@ const Canvas = ({
       {/* <EffectsCompTest
         canvasRef={canvasRef}
         state={state} /> */}
+      {/* <SelectiveBloomTest /> */}
     </div>
   );
 };
