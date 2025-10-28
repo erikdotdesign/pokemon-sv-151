@@ -1,5 +1,4 @@
-import * as THREE from "three";
-import { useLoader } from "@react-three/fiber";
+import useTextureWithFallback from "./useTextureWithFallback";
 import RoundedPlaneGeometry from "./RoundedPlaneGeometry";
 
 import BACK_IMAGE from "../images_webp/back.webp";
@@ -15,7 +14,7 @@ const CardBack = ({
   depth: number;
   cornerRadius: number;
 }) => {
-  const backTexture = useLoader(THREE.TextureLoader, BACK_IMAGE);
+  const backTexture = useTextureWithFallback(BACK_IMAGE);
 
   return (
     <mesh

@@ -33,7 +33,7 @@ const CardStack = ({
     }
   };
 
-  // Shift card group forward by hidden card length
+  // Shift card group forward by viewed card length
   const { position } = useSpring({
     position: [0, 0, currentCardIndex * CARD_DEPTH],
     config: { mass: 1, tension: 120, friction: 20 },

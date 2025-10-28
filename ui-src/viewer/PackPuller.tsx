@@ -62,7 +62,7 @@ const PackPuller = ({
     immediate: stackViewed,
     onRest: () => {
       if (stackViewed) {
-        dispatch({ type: "SET_NEW_CURRENT_PACK", cards: getGodPack(state) });
+        dispatch({ type: "SET_NEW_CURRENT_PACK", cards: getPackCards(state) });
         setStackViewed(false);
         setPackRecycle(false);
         setStackInPlace(false);

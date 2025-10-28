@@ -1,11 +1,10 @@
 import * as THREE from "three";
-import { useRef, useMemo } from "react";
+import { useRef, useMemo, useEffect } from "react";
 import { useFrame, extend } from "@react-three/fiber";
 import RoundedPlaneGeometry from "./RoundedPlaneGeometry";
 import { shaderMaterial } from "@react-three/drei";
 
 import useTextureWithFallback from "./useTextureWithFallback";
-
 import cardFrontVertex from "../shaders/vertex/cardFront.vert";
 import cardFrontFragment from "../shaders/fragment/cardFront.frag";
 
@@ -26,21 +25,12 @@ const gradientTexture = new THREE.TextureLoader().load(GRADIENT_IMAGE);
 gradientTexture.colorSpace = THREE.SRGBColorSpace;
 const bandsTexture = new THREE.TextureLoader().load(BANDS_IMAGE);
 
-export const CARD_FOIL_MAP = { 
-  NONE: 0, 
-  FLAT_SILVER: 1, 
-  SV_HOLO: 2,
-  SV_ULTRA: 3,
-  SUN_PILLAR: 4
-};
+export const CARD_FOIL_MAP = { NONE: 0, FLAT_SILVER: 1, SV_HOLO: 2, SV_ULTRA: 3, SUN_PILLAR: 4 };
+export const CARD_MASK_MAP = { NONE: 0, REVERSE: 1, HOLO: 2, ETCHED: 3 };
 
-export const CARD_MASK_MAP = { 
-  NONE: 0, 
-  REVERSE: 1,
-  HOLO: 2, 
-  ETCHED: 3
-};
-
+// ----------------------
+// Shader material
+// ----------------------
 const CardFrontMaterial = shaderMaterial(
   {
     uFoilType: 0,
@@ -61,6 +51,9 @@ const CardFrontMaterial = shaderMaterial(
 
 extend({ CardFrontMaterial });
 
+// ----------------------
+// CardFront component
+// ----------------------
 const CardFront = ({
   card,
   width,
@@ -79,17 +72,38 @@ const CardFront = ({
   const postProcessing = usePostProcessing();
   const matRef = useRef<any>(null);
 
-  const cardTexture = useMemo(() => new THREE.TextureLoader().load(card.images.front), [card.images.front]);
-  cardTexture.colorSpace = THREE.SRGBColorSpace;
-  const foilTexture = useTextureWithFallback(card.images.foil, FOIL_IMAGES[`../images_webp/foil/${card.ext.tcgl.cardID}.webp`]);
-  const etchTexture = useTextureWithFallback(card.images.etch, ETCH_IMAGES[`../images_webp/etch/${card.ext.tcgl.cardID}.webp`]);
+  // ----------------------
+  // Textures (all via useTextureWithFallback)
+  // ----------------------
+  const cardTexture = useTextureWithFallback(card.images.front);
+  const foilTexture = useTextureWithFallback(
+    card.images.foil,
+    FOIL_IMAGES[`../images_webp/foil/${card.ext.tcgl.cardID}.webp`]
+  );
+  const etchTexture = useTextureWithFallback(
+    card.images.etch,
+    ETCH_IMAGES[`../images_webp/etch/${card.ext.tcgl.cardID}.webp`]
+  );
 
+  // ----------------------
+  // Update pointer each frame
+  // ----------------------
   useFrame(() => {
     if (matRef.current && rotatorRef.current) {
       const { cursorPos } = rotatorRef.current;
       matRef.current.uPointer.set(cursorPos.current.x, cursorPos.current.y);
     }
   });
+
+  // ----------------------
+  // Dispose material on unmount
+  // ----------------------
+  useEffect(() => {
+    const mat = matRef.current;
+    return () => {
+      if (mat) mat.dispose();
+    };
+  }, []);
 
   return (
     <mesh position={[0, 0, depth]}>
@@ -107,9 +121,10 @@ const CardFront = ({
         uTextureFoil={foilTexture}
         uTextureGradient={gradientTexture}
         uTextureBands={bandsTexture}
-        uUsePostProcessing={postProcessing} />
+        uUsePostProcessing={postProcessing}
+      />
     </mesh>
   );
-}
+};
 
 export default CardFront;
