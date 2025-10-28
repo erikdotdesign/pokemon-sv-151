@@ -25,7 +25,8 @@ const PackPuller = ({
 }) => {
   const { opened } = state.packs.current;
   const [packRecycle, setPackRecycle] = useState(false);
-  const [packViewed, setPackViewed] = useState(false);
+  const [stackInPlace, setStackInPlace] = useState(false);
+  const [stackViewed, setStackViewed] = useState(false);
   const hoverRef = useRef<THREE.Group>(null!);
 
   // Pack rotation & scale spring
@@ -53,27 +54,31 @@ const PackPuller = ({
 
   // Cards rotation & scale spring
   const cardsRotationSpring = useSpring({
-    rotation: opened ? (packViewed ? [-Math.PI/2,0,0] : [0,0,0]) : [-Math.PI/2,0,0],
-    scale: opened ? (packViewed ? [0.5,0.5,0.5] : [1,1,1]) : [0.5,0.5,0.5],
-    positionY: opened ? (packViewed ? -1 : 0) : -1,
+    rotation: opened ? (stackViewed ? [-Math.PI/2,0,0] : [0,0,0]) : [-Math.PI/2,0,0],
+    scale: opened ? (stackViewed ? [0.5,0.5,0.5] : [1,1,1]) : [0.5,0.5,0.5],
+    positionY: opened ? (stackViewed ? -1 : 0) : -1,
     config: springConfig,
     delay: !opened ? 0 : 450,
-    immediate: packViewed,
+    immediate: stackViewed,
     onRest: () => {
-      if (packViewed) {
-        dispatch({ type: "SET_NEW_CURRENT_PACK", cards: getPackCards(state) });
-        setPackViewed(false);
+      if (stackViewed) {
+        dispatch({ type: "SET_NEW_CURRENT_PACK", cards: getGodPack(state) });
+        setStackViewed(false);
         setPackRecycle(false);
+        setStackInPlace(false);
+      }
+      if (opened && !stackViewed) {
+        setStackInPlace(true);
       }
     }
   });
 
   // Cards slide Z spring
   const cardsSlideSpring = useSpring({
-    positionZ: opened ? (packViewed ? 10 : 2.25) : 10,
+    positionZ: opened ? (stackViewed ? 10 : 2.25) : 10,
     config: springConfig,
     delay: !opened ? 0 : 250,
-    immediate: packViewed
+    immediate: stackViewed
   });
 
   const combinedCardsPosition = useCombinedPosition(
@@ -97,14 +102,19 @@ const PackPuller = ({
         rotation={cardsRotationSpring.rotation}
         position={combinedCardsPosition}
         scale={cardsRotationSpring.scale}>
-        <CardStack rotator={opened} state={state} dispatch={dispatch} setPackViewed={setPackViewed} />
+        <CardStack 
+          rotator={opened} 
+          state={state} 
+          stackInPlace={stackInPlace}
+          dispatch={dispatch} 
+          setStackViewed={setStackViewed} />
       </a.group>
 
       <a.group 
         rotation={packRotationSpring.rotation}
         position={combinedPackPosition}
         scale={packRotationSpring.scale}>
-        <Sparkles position={[0, 0.5, -1]} count={100} size={1} scale={[3, 5, 0]} color={"#fff"} speed={1} />
+        <Sparkles position={[0, 2, -0.5]} count={20} size={1} scale={[2, 1.5, 0]} color={"#fff"} speed={1} />
         <group ref={hoverRef} >
           <Pack packRef={packRef} rotator={!opened} state={state} dispatch={dispatch} />
         </group>

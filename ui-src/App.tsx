@@ -16,7 +16,7 @@ const App = () => {
     packs: {
       current: {
         id: "starter",
-        cards: getPackCards({ cardsById: CARDS_BY_ID } as State),
+        cards: getGodPack({ cardsById: CARDS_BY_ID } as State),
         opened: false,
         cardIndex: 0
       },

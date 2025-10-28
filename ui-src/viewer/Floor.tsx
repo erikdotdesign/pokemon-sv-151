@@ -21,7 +21,7 @@ const Floor = forwardRef(({
       position={position as unknown as [number, number, number]}>
       <planeGeometry args={[50, 50]} />
       <MeshReflectorMaterial
-        color={postProcessing ? "#999999" : "#F2F4FA"} />
+        color={postProcessing ? "#A0A0A0" : "#FCFEFF"} />
     </a.mesh>
   );
 });

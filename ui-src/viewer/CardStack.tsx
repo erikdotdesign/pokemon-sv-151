@@ -1,4 +1,4 @@
-import { useRef } from "react";
+import { useRef, useState } from "react";
 import { a, useSpring } from "@react-spring/three";
 import { Action, State } from "../reducer";
 import { CARD_DEPTH } from "./Card";
@@ -8,24 +8,28 @@ import CardStackCard from "./CardStackCard";
 const CardStack = ({ 
   state,
   rotator = true,
+  stackInPlace,
   dispatch,
-  setPackViewed
+  setStackViewed
 }: { 
   state: State;
   rotator?: boolean;
+  stackInPlace: boolean;
   dispatch: (action: Action) => void;
-  setPackViewed: (packedViewed: boolean) => void;
+  setStackViewed: (stackViewed: boolean) => void;
 }) => {
   const rotatorRef = useRef<RotatorHandle>(null);
   const { current: currentPack } = state.packs;
   const { cards, cardIndex: currentCardIndex, id: currentPackId } = currentPack;
+
+  const [hideBelow, setHideBelow] = useState(false);
 
   const handleExitComplete = () => {
     const nextIndex = currentCardIndex + 1;
     dispatch({ type: "SET_CURRENT_PACK_CARD_INDEX", cardIndex: nextIndex });
 
     if (nextIndex >= cards.length) { // last card
-      setPackViewed(true);
+      setStackViewed(true);
     }
   };
 
@@ -48,7 +52,10 @@ const CardStack = ({
               renderIndex={i}
               state={state}
               rotatorRef={rotatorRef}
-              onExitComplete={handleExitComplete} />
+              onExitComplete={handleExitComplete}
+              hideBelow={hideBelow}
+              setHideBelow={setHideBelow}
+              stackInPlace={stackInPlace} />
           );
         })}
       </a.group>
