@@ -30,7 +30,7 @@ const Viewer = ({
               dispatch={dispatch} />
           : null
         }
-        <OrbitControls />
+        {/* <OrbitControls /> */}
       </Canvas>
     </PostProcessingContext.Provider>
   );
