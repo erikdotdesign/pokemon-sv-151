@@ -1,7 +1,7 @@
 {
-  "name": "pokemon-tcg",
+  "name": "pokemon-sv-151",
   "version": "1.0.0",
-  "description": "pokemon-tcg",
+  "description": "pokemon-sv-151",
   "main": "code.js",
   "scripts": {
     "build:main": "esbuild plugin-src/code.ts --bundle --outfile=dist/code.js --target=es2017",
