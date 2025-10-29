@@ -55,13 +55,18 @@ vec4 computeFoilEffect(vec4 base, vec2 uv, float blendInterpolation1, float blen
 
   vec2 rotateUv = rotate(-PI * 0.2) * (uv - 0.5) + 0.5;
 
+  float uMaskBlackPoint = 0.13;
+  float uMaskWhitePoint = 1.0;
+
   // Foil
   vec2 foilUv = uv;
   vec4 foil = texture2D(uTextureFoil, foilUv);
+  float foilMask = clamp((foil.r - uMaskBlackPoint) / (uMaskWhitePoint - uMaskBlackPoint), 0.0, 1.0);
   
   // Etch
   vec2 etchUv = uv;
   vec4 etch = texture2D(uTextureEtch, etchUv);
+  float etchMask = clamp((etch.r - uMaskBlackPoint) / (uMaskWhitePoint - uMaskBlackPoint), 0.0, 1.0);
 
   vec2 noiseUv = uv;
   vec4 noise = texture2D(uTextureNoise, noiseUv);
@@ -131,13 +136,11 @@ vec4 computeFoilEffect(vec4 base, vec2 uv, float blendInterpolation1, float blen
   float gray = dot(gradient.rgb, vec3(0.299, 0.587, 0.114));
   vec3 maskedGradient1 = gradient.rgb * bands1.r;
   vec3 maskedGradient2 = gradient.rgb * bands2.r;
-  vec3 maskedGradient3 = vec3(gray) * etch.r;
-  
-  // Remove color from bands for reverse foil
-  if (uFoilType == 1) {
-    maskedGradient1 = vec3(gray) * bands1.r;
-    maskedGradient2 = vec3(gray) * bands2.r;
-  }
+  vec3 maskedGradient3 = gradient.rgb * etchMask;
+  // Grayscale masked gradients
+  vec3 maskedGrayGradient1 = vec3(gray) * bands1.r;
+  vec3 maskedGrayGradient2 = vec3(gray) * bands2.r;
+  vec3 maskedGrayGradient3 = vec3(gray) * etchMask;
 
   // Bands with noise
   vec4 noisyBands1 = vec4(blendLinearLight(maskedGradient1.rgb, noise.rgb, blendInterpolation2), 1.0);
@@ -146,23 +149,31 @@ vec4 computeFoilEffect(vec4 base, vec2 uv, float blendInterpolation1, float blen
   // Foil bands 1
   finalColor = vec4(blendColorDodge(finalColor.rgb, noisyBands1.rgb, blendInterpolation2), 1.0);
   finalColor = vec4(blendColorDodge(finalColor.rgb, noisyBands1.rgb, blendInterpolation2), 1.0);
-  finalColor = vec4(blendColorDodge(finalColor.rgb, maskedGradient1.rgb, blendInterpolation2), 1.0);
+  finalColor = vec4(blendColorDodge(finalColor.rgb, noisyBands1.rgb, blendInterpolation2), 1.0);
+  finalColor = vec4(blendColorDodge(finalColor.rgb, maskedGrayGradient1.rgb, blendInterpolation2), 1.0);
+
+  // Reverse foil
+  if (uFoilType == 1) {
+    finalColor = vec4(blendColorDodge(finalColor.rgb, maskedGrayGradient1.rgb, blendInterpolation2), 0.6);
+    finalColor = vec4(blendMultiply(finalColor.rgb, maskedGrayGradient1.rgb, blendInterpolation2), 0.6);
+  }
 
   // Foils bands 2
   if (uFoilType != 1) {
     finalColor = vec4(blendColorDodge(finalColor.rgb, noisyBands2.rgb, blendInterpolation2), 1.0);
     finalColor = vec4(blendColorDodge(finalColor.rgb, noisyBands2.rgb, blendInterpolation2), 1.0);
-    finalColor = vec4(blendColorDodge(finalColor.rgb, maskedGradient2.rgb, blendInterpolation2), 1.0);
+    finalColor = vec4(blendColorDodge(finalColor.rgb, noisyBands2.rgb, blendInterpolation2), 1.0);
+    finalColor = vec4(blendColorDodge(finalColor.rgb, maskedGrayGradient2.rgb, blendInterpolation2), 1.0);
   }
 
   // Foil etch
   if (uMaskType == 3) {
-    finalColor = vec4(blendColorDodge(finalColor.rgb, maskedGradient3.rgb, blendInterpolation2), 1.0);
-    finalColor = vec4(blendColorBurn(finalColor.rgb, maskedGradient3.rgb, blendInterpolation2), 1.0);
+    finalColor = vec4(blendColorDodge(finalColor.rgb, maskedGrayGradient3.rgb, blendInterpolation2), 1.0);
+    finalColor = vec4(blendColorBurn(finalColor.rgb, maskedGrayGradient3.rgb, blendInterpolation2), 1.0);
   }
   
   // Foil mask
-  finalColor = vec4(mix(base.rgb, finalColor.rgb, foil.r), 1.0);
+  finalColor = vec4(mix(base.rgb, finalColor.rgb, foilMask), 1.0);
   
   return finalColor;
 }

@@ -1,11 +1,11 @@
+import { useRef } from "react";
+import { AmbientLight, DirectionalLight, Mesh } from "three";
 import { Action, State } from "../reducer";
+import { usePostProcessing } from "./usePostProcessing";
 
 import PackPuller from "./PackPuller";
 import Floor from "./Floor";
 import PacksEffects from "./PacksEffects";
-import { useRef } from "react";
-import { AmbientLight, DirectionalLight, Mesh } from "three";
-import { usePostProcessing } from "./usePostProcessing";
 
 const PacksViewer = ({ 
   state,

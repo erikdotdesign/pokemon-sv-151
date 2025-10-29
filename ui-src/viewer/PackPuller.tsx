@@ -99,9 +99,9 @@ const PackPuller = ({
   return (
     <>
       <a.group 
-        rotation={cardsRotationSpring.rotation}
+        rotation={cardsRotationSpring.rotation as unknown as [number, number, number]}
         position={combinedCardsPosition}
-        scale={cardsRotationSpring.scale}>
+        scale={cardsRotationSpring.scale as unknown as [number, number, number]}>
         <CardStack 
           rotator={opened} 
           state={state} 
@@ -111,12 +111,22 @@ const PackPuller = ({
       </a.group>
 
       <a.group 
-        rotation={packRotationSpring.rotation}
+        rotation={(packRotationSpring as any).rotation}
         position={combinedPackPosition}
-        scale={packRotationSpring.scale}>
-        <Sparkles position={[0, 2, -0.5]} count={20} size={1} scale={[2, 1.5, 0]} color={"#fff"} speed={1} />
+        scale={(packRotationSpring as any).scale}>
+        <Sparkles 
+          position={[0, 2, -0.5]} 
+          count={15} 
+          size={1}
+          scale={[2, 1.5, 0]} 
+          color={"#fff"} 
+          speed={1} />
         <group ref={hoverRef} >
-          <Pack packRef={packRef} rotator={!opened} state={state} dispatch={dispatch} />
+          <Pack 
+            packRef={packRef} 
+            rotator={!opened} 
+            state={state} 
+            dispatch={dispatch} />
         </group>
       </a.group>
     </>

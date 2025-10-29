@@ -4,27 +4,14 @@ import * as THREE from "three";
 const textureLoader = new THREE.TextureLoader();
 
 // ----------------------
-// Global texture cache
-// ----------------------
-const textureCache = new Map<string, THREE.Texture>();
-
-// ----------------------
 // Load a texture with fallback
 // ----------------------
 const loadWithFallback = (primaryUrl?: string, fallbackUrl?: string) => {
   return new Promise<THREE.Texture>((resolve) => {
-    const key = primaryUrl || fallbackUrl!;
-    if (textureCache.has(key)) {
-      resolve(textureCache.get(key)!);
-      return;
-    }
-
     const loadTexture = (url: string, onFail?: () => void) => {
       textureLoader.load(
         url,
         (tex) => {
-          tex.colorSpace = THREE.SRGBColorSpace; // consistent color space
-          textureCache.set(key, tex);
           resolve(tex);
         },
         undefined,
@@ -34,7 +21,6 @@ const loadWithFallback = (primaryUrl?: string, fallbackUrl?: string) => {
         }
       );
     };
-
     if (primaryUrl) {
       loadTexture(primaryUrl, () => {
         if (fallbackUrl) loadTexture(fallbackUrl);
@@ -48,15 +34,24 @@ const loadWithFallback = (primaryUrl?: string, fallbackUrl?: string) => {
 // ----------------------
 // Hook
 // ----------------------
-const useTextureWithFallback = (cdnUrl?: string, localUrl?: string) => {
+const useTextureWithFallback = ({
+  primaryUrl,
+  fallbackUrl,
+  colorSpace = THREE.SRGBColorSpace
+}: {
+  primaryUrl?: string; 
+  fallbackUrl?: string;
+  colorSpace?: THREE.ColorSpace;
+}) => {
   const [texture, setTexture] = useState<THREE.Texture | null>(null);
 
   useEffect(() => {
-    if (!cdnUrl && !localUrl) return;
+    if (!primaryUrl && !fallbackUrl) return;
     let isCancelled = false;
 
-    loadWithFallback(cdnUrl, localUrl).then((tex) => {
+    loadWithFallback(primaryUrl, fallbackUrl).then((tex) => {
       if (isCancelled) return;
+      tex.colorSpace = colorSpace;
       tex.needsUpdate = true;
       setTexture(tex);
     });
@@ -65,7 +60,7 @@ const useTextureWithFallback = (cdnUrl?: string, localUrl?: string) => {
       isCancelled = true;
       // do NOT dispose the cached texture here — it’s global and reused
     };
-  }, [cdnUrl, localUrl]);
+  }, [primaryUrl, fallbackUrl]);
 
   return texture;
 };

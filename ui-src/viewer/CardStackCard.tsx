@@ -50,7 +50,7 @@ const CardStackCard = ({
   const { revealProgress } = useSpring({
     from: { revealProgress: 0 },
     to: revealed ? { revealProgress: 1 } : { revealProgress: 0 },
-    config: { duration: 1200, easing: (t) => 1 - Math.pow(1 - t, 3) },
+    config: { duration: 800, easing: (t) => 1 - Math.pow(1 - t, 3) },
     immediate: !revealed,
     onStart: () => {
       if (revealed) setHideBelow(true);
