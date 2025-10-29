@@ -1,59 +1,71 @@
-# Tarot Reading Figma Widget
+# Pokémon SV-151 — Figma Plugin
 
-**tarot-reading** is a Figma widget that brings the mystical art of tarot directly into your Figma workspace. Using the classic **Rider–Waite Tarot deck**, it allows you to perform virtual tarot readings with ease and clarity.
+**Pokémon Scarlet & Violet 151 Card Pack Opener**  
+A fully interactive pack-opening experience right inside Figma — complete with realistic pull rates, foils, sparkles, and every card from the iconic 151 set.
 
-![cover](tarot-reading-cover.png) 
+![cover](pokemon-sv-151-cover.png) 
+
+## Overview
+
+**pokemon-sv-151** is a Figma plugin that lets you open virtual Pokémon TCG: *Scarlet & Violet – 151* packs directly in your design environment.  
+Whether you’re prototyping a collectible experience, showing off motion effects, or just having fun, this plugin brings the thrill of opening booster packs to your canvas.  
+
+**Collect ’em all — right inside Figma!**
 
 ## Features
 
-- **Question Input** – Enter a question to focus your reading.  
-- **Complete Deck** – Includes all **78 tarot cards** with:  
-  - Meanings  
-  - Descriptions  
-  - Symbolism  
-- **Three Reading Types/Spreads**:  
-  1. **3-Card Spread** – Past, Present, Future.  
-  2. **5-Card Spread** – A cross layout revealing deeper insights.  
-  3. **10-Card Celtic Cross** – The classic detailed spread for a comprehensive reading.  
-- **Card Insights** – Each card drawn in a spread comes with a full description to help interpret your reading.  
+- **All 360 Cards Included**  
+  Every card from the *Scarlet & Violet 151* set, fully categorized and render-ready.
 
-## How to Use
+- **Realistic Pull Rates**  
+  Each pack simulates authentic booster odds — from commons to secret rares.
 
-1. Install the **tarot-reading** widget in Figma.  
-2. Click the widget to open it.  
-3. Type a question you’d like guidance on.  
-4. Select a reading type (3-card, 5-card, or 10-card).  
-5. Draw your cards.  
-6. View each card’s meanings, descriptions, and symbology in the spread.
+- **Foils & Sparkles**  
+  Cards can appear with shiny foil and sparkle effects for extra excitement.
+
+- **Animated Pack Reveal**  
+  Smooth, cinematic animations for each pack pull.
+
+## How It Works
+
+1. **Run the plugin** in Figma → search for `pokemon-sv-151`.
+2. Click the pack to reveal a randomized set of cards.
+3. Enjoy the foil effects and sparkles.
+
+## Data
+
+- Includes all **360 cards** from the *SV151* set.  
+- Categorized by rarity, type, and collector number.  
+- Based on real-world **pull rates** from official TCG data.
 
 ## Installation
 
-1. Open Figma and navigate to the **Widgets** panel.  
-2. Search for **tarot-reading**.  
-3. Click **Install**.
+1. Open Figma → **Plugins → Browse Plugins in Community**  
+2. Search **pokemon-sv-151”**  
+3. Click **Install**  
+4. Run it from **Plugins → pokemon-sv-151**
 
-## Contributing
-
-Contributions are welcome! Feel free to submit issues, bug reports, or feature requests. Pull requests should follow consistent formatting and maintain readability.  
-
-## Development  
-
-Clone this repo and run locally:  
+## Development
 
 ```bash
-git clone https://github.com/erikdotdesign/tarot-reading.git
-cd tarot-reading
+git clone https://github.com/erikdotdesign/pokemon-sv-151.git
+cd pokemon-sv-151
 npm install
 npm run dev
-Load the manifest.json into Figma → Widgets → Development → Import widget from manifest…
+Load the manifest.json into Figma → Plugins → Development → Import plugin from manifest…
 ```
 
 This plugin is built with:  
+- [React.js](https://react.dev/)
+- [TypeScript](https://www.typescriptlang.org/)
 - [Three.js](https://threejs.org/) for 3D rendering  
 - [React-three-fiber](https://r3f.docs.pmnd.rs/getting-started/introduction) for 3D rendering
-- [Figma Widgets API](https://developers.figma.com/docs/widgets/)  
-- React + TypeScript 
+- [React-three-drei](https://drei.docs.pmnd.rs/getting-started/introduction) for 3D rendering
+- [React-three-spring](https://www.react-spring.dev/docs/guides/react-three-fiber) for 3D animations
+- [Figma Plugin API](https://www.figma.com/plugin-docs/)
 
-## License
+## License 
 
-This project is licensed under the MIT License.
+MIT
+
+*Not affiliated with or endorsed by The Pokémon Company International.*
