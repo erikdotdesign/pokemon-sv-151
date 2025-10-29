@@ -41,7 +41,7 @@ Whether you’re prototyping a collectible experience, showing off motion effect
 ## Installation
 
 1. Open Figma → **Plugins → Browse Plugins in Community**  
-2. Search **pokemon-sv-151”**  
+2. Search **pokemon-sv-151**  
 3. Click **Install**  
 4. Run it from **Plugins → pokemon-sv-151**
 
