@@ -145,21 +145,26 @@ vec4 computeFoilEffect(vec4 base, vec2 uv, float blendInterpolation1, float blen
   // Bands with noise
   vec4 noisyBands1 = vec4(blendLinearLight(maskedGradient1.rgb, noise.rgb, blendInterpolation2), 1.0);
   vec4 noisyBands2 = vec4(blendLinearLight(maskedGradient2.rgb, noise.rgb, blendInterpolation2), 1.0);
-
-  // Foil bands 1
-  finalColor = vec4(blendColorDodge(finalColor.rgb, noisyBands1.rgb, blendInterpolation2), 1.0);
-  finalColor = vec4(blendColorDodge(finalColor.rgb, noisyBands1.rgb, blendInterpolation2), 1.0);
-  finalColor = vec4(blendColorDodge(finalColor.rgb, noisyBands1.rgb, blendInterpolation2), 1.0);
-  finalColor = vec4(blendColorDodge(finalColor.rgb, maskedGrayGradient1.rgb, blendInterpolation2), 1.0);
+  vec4 noisyGrayBands1 = vec4(blendLinearLight(maskedGrayGradient1.rgb, noise.rgb, blendInterpolation2), 1.0);
+  vec4 noisyGrayBands2 = vec4(blendLinearLight(maskedGrayGradient2.rgb, noise.rgb, blendInterpolation2), 1.0);
 
   // Reverse foil
   if (uFoilType == 1) {
-    finalColor = vec4(blendColorDodge(finalColor.rgb, maskedGrayGradient1.rgb, blendInterpolation2), 0.6);
+    finalColor = vec4(blendColorDodge(finalColor.rgb, noisyGrayBands1.rgb, blendInterpolation2), 1.0);
+    finalColor = vec4(blendColorDodge(finalColor.rgb, noisyGrayBands1.rgb, blendInterpolation2), 1.0);
+    finalColor = vec4(blendColorDodge(finalColor.rgb, noisyGrayBands1.rgb, blendInterpolation2), 1.0);
+    finalColor = vec4(blendOverlay(finalColor.rgb, maskedGrayGradient1.rgb, blendInterpolation2), 0.6);
     finalColor = vec4(blendMultiply(finalColor.rgb, maskedGrayGradient1.rgb, blendInterpolation2), 0.6);
   }
 
-  // Foils bands 2
+  // All other foils
   if (uFoilType != 1) {
+    // Foil bands 1
+    finalColor = vec4(blendColorDodge(finalColor.rgb, noisyBands1.rgb, blendInterpolation2), 1.0);
+    finalColor = vec4(blendColorDodge(finalColor.rgb, noisyBands1.rgb, blendInterpolation2), 1.0);
+    finalColor = vec4(blendColorDodge(finalColor.rgb, noisyBands1.rgb, blendInterpolation2), 1.0);
+    finalColor = vec4(blendColorDodge(finalColor.rgb, maskedGrayGradient1.rgb, blendInterpolation2), 1.0);
+    // Foils bands 2
     finalColor = vec4(blendColorDodge(finalColor.rgb, noisyBands2.rgb, blendInterpolation2), 1.0);
     finalColor = vec4(blendColorDodge(finalColor.rgb, noisyBands2.rgb, blendInterpolation2), 1.0);
     finalColor = vec4(blendColorDodge(finalColor.rgb, noisyBands2.rgb, blendInterpolation2), 1.0);

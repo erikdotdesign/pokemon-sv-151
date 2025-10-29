@@ -1,9 +1,7 @@
 import * as THREE from "three";
-import { useThree } from "@react-three/fiber";
 import { EffectComposer, SelectiveBloom } from "@react-three/postprocessing";
 import { State } from "../reducer";
 import { useEffect, useState } from "react";
-import { BlendFunction } from "postprocessing";
 
 import { usePostProcessing } from "./usePostProcessing";
 
@@ -21,7 +19,6 @@ const PacksEffects = ({
   const [bloomSelection, setBloomSelection] = useState<THREE.Object3D[]>([]);
   const [bloomLights, setBloomLights] = useState<THREE.Light[]>([]);
 
-  // Wait until refs are populated
   useEffect(() => {
     const pack = packRef.current;
     const lights = lightRefs.map(l => l.current).filter(Boolean) as THREE.Light[];
