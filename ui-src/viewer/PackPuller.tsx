@@ -4,7 +4,7 @@ import { Sparkles } from "@react-three/drei";
 import { useFrame } from "@react-three/fiber";
 import { a, useSpring, to } from "@react-spring/three";
 import { Action, State } from "../reducer";
-import { getPackCards, getGodPack } from "../selectors";
+import { getPackCards, getGodPack, displayPack } from "../selectors";
 
 import Pack from "./Pack";
 import CardStack from "./CardStack";

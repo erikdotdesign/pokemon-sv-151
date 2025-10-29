@@ -1,6 +1,6 @@
 import { useRef, useReducer } from "react";
 import reducer, { Card, State } from "./reducer";
-import { getPackCards, getGodPack } from "./selectors";
+import { getPackCards, getGodPack, displayPack } from "./selectors";
 import cardData from "./data/cards_merged.json";
 import usePluginStorage from "./usePluginStorage";
 import Canvas from "./Canvas";

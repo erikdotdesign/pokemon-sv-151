@@ -61,7 +61,7 @@ export const getGodPack = (state: State): string[] => {
   return result;
 };
 
-export const getPackCards = (state: State, reversefoil2Id?: string): string[] => {
+export const getPackCards = (state: State): string[] => {
   const allCards = Object.values(state.cardsById);
   const result: string[] = [];
 
@@ -153,7 +153,7 @@ export const getPackCards = (state: State, reversefoil2Id?: string): string[] =>
         c.foil?.type === "FLAT_SILVER", // fallback pool
     0.69 // weight bias toward reverse holo
   );
-  result.push(reversefoil2Id ? reversefoil2Id : reverseHolo2.ext.tcgl.cardID);
+  result.push(reverseHolo2.ext.tcgl.cardID);
 
   // Slot 10: guaranteed rare holo
   const rareHolo = pickWeightedCard(
@@ -165,4 +165,13 @@ export const getPackCards = (state: State, reversefoil2Id?: string): string[] =>
   result.push(rareHolo.ext.tcgl.cardID);
 
   return result;
+};
+
+export const displayPack = (): string[] => {
+  const commons = ["sv3-5_54", "sv3-5_4", "sv3-5_25", "sv3-5_1"];
+  const unCommons = ["sv3-5_107", "sv3-5_80", "sv3-5_128"];
+  const reverseFoil = "sv3-5_129_ph";
+  const reverseFoil2 = "sv3-5_199";
+  const rare = "sv3-5_122";
+  return [...commons, ...unCommons, reverseFoil, reverseFoil2, rare];
 };
