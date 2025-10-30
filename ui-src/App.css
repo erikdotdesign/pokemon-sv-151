@@ -1,8 +1,8 @@
-.figma-light {
+:root {
   --color-primary: #1E1E1E;
   --color-primary-hover: #121212;
-  --color-gray: #6E6E6E;
-  --color-gray-hover: #5A5A5A;
+  --color-gray: #E2E6F0;
+  --color-gray-hover: #CBCFD8;
   --color-bg-z0: #ffffff;
   --color-bg-z1: #F7F7F7;
   --color-bg-z2: #EFEFEF;
@@ -29,46 +29,21 @@
   --color-text-lightest: color-mix(in srgb, var(--color-text-base) 25%, transparent);
   --color-text-base-on-primary: #FFFFFF;
   --color-text-base-on-red: #FFFFFF;
-}
-
-.figma-dark {
-  --color-primary: #F7F7F7;
-  --color-primary-hover: #ffffff;
-  --color-gray: #B0B0B0;
-  --color-gray-hover: #C2C2C2;
-  --color-bg-z0: #121212;
-  --color-bg-z1: #1E1E1E;
-  --color-bg-z2: #2A2A2A;
-  --color-bg-z3: #363636;
-  --color-border-z0: #252525;
-  --color-border-z1: #303030;
-  --color-border-z2: #3B3B3B;
-  --color-border-z3: #464646;
-  --color-border-glass: color-mix(in srgb, #ffffff 20%, transparent);
-  --color-border-glass-hover: color-mix(in srgb, #ffffff 40%, transparent);
-  --color-blue: #29B6F6;
-  --color-blue-hover: #4FC3F7;
-  --color-green: #66BB6A;
-  --color-green-hover: #81C784;
-  --color-yellow: #FFB74D;
-  --color-yellow-hover: #FFCC80;
-  --color-red: #EF5350;
-  --color-red-hover: #E57373;
-  --color-purple: #BA68C8;
-  --color-purple-hover: #CC8FD6;
-  --color-text-base: #ffffff;
-  --color-text-light: color-mix(in srgb, var(--color-text-base) 75%, transparent);
-  --color-text-lighter: color-mix(in srgb, var(--color-text-base) 50%, transparent);
-  --color-text-lightest: color-mix(in srgb, var(--color-text-base) 25%, transparent);
-  --color-text-base-on-primary: #000000;
-  --color-text-base-on-red: #FFFFFF;
-}
-
-:root {
+  --color-type-water: #05A8D9;
+  --color-type-metal: #8B929A;
+  --color-type-colorless: #EDEFF1;
+  --color-type-lightning: #FCD021;
+  --color-type-fire: #D8223B;
+  --color-type-grass: #238842;
+  --color-type-fighting: #B16232;
+  --color-type-psychic: #99469A;
+  --color-type-fairy: #D6457E;
+  --color-type-dark: #2E7077;
+  --color-type-dragon: #A78B31;
   --font-family: "Inter", sans-serif;
   --font-family-headline: "Inter", sans-serif;
   --font-family-mono: "Inter", monospace;
-  --border-radius: 0px;
+  --border-radius: 8px;
   --control-addon-size: 40px;
   --anim-params: 2.5s linear infinite alternate;
 }

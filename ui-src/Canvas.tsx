@@ -1,7 +1,7 @@
 import { Action, State } from "./reducer";
 import Viewer from "./viewer/Viewer";
-import EffectsCompTest from "./viewer/EffectsCompTest";
-import SelectiveBloomTest from "./viewer/SelectiveBloomTest";
+import Button from "./Button";
+import CollectionButton from "./CollectionButton";
 import './Canvas.css';
 
 const Canvas = ({
@@ -15,14 +15,15 @@ const Canvas = ({
 }) => {
   return (
     <div className="c-canvas">
+      <div className="c-canvas__controls c-canvas__controls--top c-canvas__controls--right">
+        <CollectionButton 
+          state={state}
+          dispatch={dispatch} />
+      </div>
       <Viewer
         canvasRef={canvasRef}
         state={state}
         dispatch={dispatch} />
-      {/* <EffectsCompTest
-        canvasRef={canvasRef}
-        state={state} /> */}
-      {/* <SelectiveBloomTest /> */}
     </div>
   );
 };

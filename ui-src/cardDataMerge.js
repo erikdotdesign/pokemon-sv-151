@@ -15,7 +15,7 @@ for (const card of tcgData) {
   const key = Number(card.number);
   const images = card.images;
   if (images.large) {
-    tcgImageMap.set(key, images.large);
+    tcgImageMap.set(key, { large: images.large, small: images.small });
   }
 }
 
@@ -23,11 +23,11 @@ for (const card of tcgData) {
 for (const card of malieData) {
   const { collector_number, ext } = card;
   const cardId = ext.tcgl.cardID;
-  const frontImage = tcgImageMap.get(collector_number.numeric);
+  const tcgImages = tcgImageMap.get(collector_number.numeric);
   const foilPath = path.join(foilDir, `${cardId}.webp`);
   const etchPath = path.join(etchDir, `${cardId}.webp`);
   const malieImages = card.images.tcgl.png;
-  let newImages = { front: frontImage };
+  let newImages = { front: tcgImages.large, thumbnail: tcgImages.small  };
   if (malieImages.foil || malieImages.etch) newImages.fallBack = {};
   if (malieImages.foil) {
     newImages = { 

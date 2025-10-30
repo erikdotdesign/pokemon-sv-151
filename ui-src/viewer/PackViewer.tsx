@@ -1,4 +1,4 @@
-import { useRef } from "react";
+import { useRef, useState } from "react";
 import * as THREE from "three";
 import { Sparkles } from "@react-three/drei";
 import { useFrame } from "@react-three/fiber";
@@ -8,13 +8,12 @@ import { getPackCards, getGodPack, displayPack } from "../selectors";
 
 import Pack from "./Pack";
 import CardStack from "./CardStack";
-import { useState } from "react";
 
 const springConfig = { mass: 1, tension: 170, friction: 26 };
 
 const useCombinedPosition = (y: any, z: any) => to([y, z], (yy, zz) => [0, yy, zz]);
 
-const PackPuller = ({ 
+const PackViewer = ({ 
   state, 
   dispatch,
   packRef
@@ -109,7 +108,6 @@ const PackPuller = ({
           dispatch={dispatch} 
           setStackViewed={setStackViewed} />
       </a.group>
-
       <a.group 
         rotation={(packRotationSpring as any).rotation}
         position={combinedPackPosition}
@@ -133,4 +131,4 @@ const PackPuller = ({
   );
 };
 
-export default PackPuller;
+export default PackViewer;

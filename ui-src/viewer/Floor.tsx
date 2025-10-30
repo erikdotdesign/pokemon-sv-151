@@ -11,7 +11,7 @@ const Floor = forwardRef(({
 }, ref) => {
   const postProcessing = usePostProcessing();
   const { position } = useSpring({
-    position: state.packs.current.opened ? [0,-1.5,0] : [0,-2.1,0],
+    position: (state.packs.current.opened || state.overlay.selectedCardId) ? [0,-1.5,0] : [0,-2.1,0],
     config: { mass: 1, tension: 170, friction: 26 }
   });
   return (

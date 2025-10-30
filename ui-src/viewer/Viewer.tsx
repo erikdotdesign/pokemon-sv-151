@@ -1,10 +1,16 @@
 import * as THREE from "three";
+import { useRef } from "react";
 import { Canvas } from "@react-three/fiber";
 import { OrbitControls } from "@react-three/drei";
 import { PostProcessingContext } from "./usePostProcessing";
 import { Action, State } from "../reducer";
 
-import PacksViewer from "./PacksViewer";
+import Effects from "./Effects";
+import Enviornment from "./Enviornment";
+import Lights, { LightsHandle } from "./Lights";
+import Floor from "./Floor";
+import PackViewer from "./PackViewer";
+import CardViewer from "./CardViewer";
 
 const Viewer = ({ 
   canvasRef,
@@ -15,21 +21,32 @@ const Viewer = ({
   state: State;
   dispatch: (action: Action) => void;
 }) => {
+  const packRef = useRef<THREE.Mesh>(null);
+  const lightsRef = useRef<LightsHandle>(null);
+
   return (
     <PostProcessingContext.Provider value={true}>
       <Canvas 
         ref={canvasRef} 
         shadows 
-        gl={{ 
-          outputColorSpace: THREE.SRGBColorSpace
-        }}>
+        gl={{ outputColorSpace: THREE.SRGBColorSpace }}>
+        <Enviornment />
+        <Lights ref={lightsRef} />
         {
-          state.view === "packs"
-          ? <PacksViewer 
+          !state.overlay.selectedCardId
+          ? <PackViewer 
+              packRef={packRef}
               state={state} 
               dispatch={dispatch} />
-          : null
+          : <CardViewer 
+              state={state}
+              dispatch={dispatch} />
         }
+        <Floor state={state} />
+        <Effects 
+          lightsRef={lightsRef}
+          packRef={packRef}
+          state={state} />
         {/* <OrbitControls /> */}
       </Canvas>
     </PostProcessingContext.Provider>

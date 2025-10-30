@@ -5,6 +5,7 @@ import cardData from "./data/cards_merged.json";
 import usePluginStorage from "./usePluginStorage";
 import Canvas from "./Canvas";
 import "./App.css";
+import Collection from "./Collection";
 
 const CARDS_BY_ID = Object.fromEntries(
   cardData.map(card => [card.ext.tcgl.cardID, card as Card])
@@ -12,7 +13,16 @@ const CARDS_BY_ID = Object.fromEntries(
 
 const App = () => {
   const [state, dispatch] = useReducer(reducer, {
-    view: "packs",
+    overlay: {
+      collectionVisible: false,
+      selectedCardId: null,
+      filters: {
+        query: "",
+        rarity: "ALL",
+        type: "ALL",
+        sort: "index"
+      }
+    },
     packs: {
       current: {
         id: "starter",
@@ -44,6 +54,9 @@ const App = () => {
           state={state}
           dispatch={dispatch}
           canvasRef={canvasRef} />
+        <Collection
+          state={state}
+          dispatch={dispatch} />
       </section>
     </main>
   );

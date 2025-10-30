@@ -5,6 +5,8 @@ export type CardFoilMask = "ETCHED" | "HOLO" | "REVERSE";
 
 export type CardRarity = "COMMON" | "UNCOMMON" | "RARE" | "DOUBLE_RARE" | "ULTRA_RARE" | "ILLUSTRATION_RARE" | "SPECIAL_ILLUSTRATION_RARE" | "HYPER_RARE";
 
+export type PokemonTypes = "COLORLESS" | "DARKNESS" | "DRAGON" | "FAIRY" | "FIGHTING" | "FIRE" | "GRASS" | "LIGHTNING" | "METAL" | "PSYCHIC" | "WATER";
+
 export type CardText =
   | {
       kind: "ATTACK";
@@ -56,7 +58,7 @@ export type Card = {
   stage?: string;
   stage_text?: string;
   hp?: number;
-  types?: string[];
+  types?: PokemonTypes[];
   weakness?: {
     types: string[];
     operator?: string;
@@ -97,12 +99,23 @@ export type Packs = {
 
 export type View = "collection" | "packs";
 
+export type Overlay = {
+  collectionVisible: boolean;
+  selectedCardId?: string | null;
+  filters: {
+    query?: string;
+    rarity?: CardRarity | "ALL";
+    type?: PokemonTypes | "ALL";
+    sort?: "name" | "rarity" | "type" | "index";
+  };
+}
+
 export type Collection = {
   cards: Record<string, number>;
 }
 
 export type State = {
-  view: View;
+  overlay: Overlay;
   collection: Collection;
   packs: Packs;
   cardsById: Record<string, Card>;
@@ -111,7 +124,10 @@ export type State = {
 
 export type Action = 
   | { type: "HYDRATE_STATE"; state: State | Partial<State> }
-  | { type: "SET_VIEW"; view: View }
+  | { type: "TOGGLE_COLLECTION_OVERLAY"; visible?: boolean }
+  | { type: "SET_SELECTED_CARD"; cardId: string | null }
+  | { type: "SET_COLLECTION_FILTER"; filters: Partial<Overlay["filters"]> }
+  | { type: "CLEAR_COLLECTION_FILTERS" }
   | { type: "SET_NEW_CURRENT_PACK", cards: string[] }
   | { type: "SET_CURRENT_PACK_CARD_INDEX", cardIndex: number }
   | { type: "OPEN_CURRENT_PACK" }
@@ -121,32 +137,79 @@ const reducer = (state: State, action: Action): State => {
   switch (action.type) {
     case "HYDRATE_STATE":
       return mergeState(state, action.state);
-    case "SET_VIEW": return { 
-      ...state, 
-      view: action.view
-    };
-    case "SET_CURRENT_PACK_CARD_INDEX": return { 
-      ...state, 
-      packs: {
-        ...state.packs,
-        current: {
-          ...state.packs.current,
-          cardIndex: action.cardIndex
+    case "TOGGLE_COLLECTION_OVERLAY": {
+      return {
+        ...state,
+        overlay: {
+          ...state.overlay,
+          collectionVisible:
+            typeof action.visible === "boolean"
+              ? action.visible
+              : !state.overlay.collectionVisible,
+        },
+      };
+    }
+    case "SET_SELECTED_CARD": {
+      return {
+        ...state,
+        overlay: {
+          ...state.overlay,
+          selectedCardId: action.cardId,
+        },
+      };
+    }
+    case "SET_COLLECTION_FILTER": {
+      return {
+        ...state,
+        overlay: {
+          ...state.overlay,
+          filters: {
+            ...state.overlay.filters,
+            ...action.filters,
+          },
+        },
+      };
+    }
+    case "CLEAR_COLLECTION_FILTERS": {
+      return {
+        ...state,
+        overlay: {
+          ...state.overlay,
+          filters: {
+            query: "",
+            rarity: "ALL",
+            type: "ALL",
+            sort: "index",
+          },
+        },
+      };
+    }
+    case "SET_CURRENT_PACK_CARD_INDEX": {
+      return { 
+        ...state, 
+        packs: {
+          ...state.packs,
+          current: {
+            ...state.packs.current,
+            cardIndex: action.cardIndex
+          }
         }
-      }
-    };
-    case "SET_NEW_CURRENT_PACK": return { 
-      ...state, 
-      packs: {
-        ...state.packs,
-        current: {
-          id: `pack_${Date.now()}_${Math.floor(Math.random() * 1_000_000)}`,
-          cards: action.cards,
-          opened: false,
-          cardIndex: 0
+      };
+    }
+    case "SET_NEW_CURRENT_PACK": {
+      return { 
+        ...state, 
+        packs: {
+          ...state.packs,
+          current: {
+            id: `pack_${Date.now()}_${Math.floor(Math.random() * 1_000_000)}`,
+            cards: action.cards,
+            opened: false,
+            cardIndex: 0
+          }
         }
-      }
-    };
+      };
+    }
     case "OPEN_CURRENT_PACK": {
       if (state.packs.available <= 0) return state;
       const newCollection = addCardsToCollection(state.collection, state.packs.current.cards);

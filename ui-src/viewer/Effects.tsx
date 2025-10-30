@@ -4,15 +4,16 @@ import { State } from "../reducer";
 import { useEffect, useState } from "react";
 
 import { usePostProcessing } from "./usePostProcessing";
+import { LightsHandle } from "./Lights";
 
-const PacksEffects = ({ 
+const Effects = ({ 
   state,
   packRef,
-  lightRefs
+  lightsRef
 }: { 
   state: State;
   packRef: React.RefObject<THREE.Mesh | null>;
-  lightRefs: React.RefObject<THREE.Light | null>[];
+  lightsRef: React.RefObject<LightsHandle | null>;
 }) => {
   const postProcessing = usePostProcessing();
 
@@ -21,13 +22,15 @@ const PacksEffects = ({
 
   useEffect(() => {
     const pack = packRef.current;
-    const lights = lightRefs.map(l => l.current).filter(Boolean) as THREE.Light[];
+    const ambientLight = lightsRef.current?.ambient.current;
+    const dirLight1 = lightsRef.current?.dir1.current;
+    const dirLight2 = lightsRef.current?.dir2.current;
 
-    if (pack && lights.length) {
-      setBloomSelection([pack]);
-      setBloomLights(lights);
+    if (ambientLight && dirLight1 && dirLight2) {
+      setBloomSelection(pack ? [pack] : []);
+      setBloomLights([ambientLight, dirLight1, dirLight2]);
     }
-  }, [packRef, lightRefs]);
+  }, [packRef, lightsRef]);
 
   return (
     postProcessing &&
@@ -42,4 +45,4 @@ const PacksEffects = ({
   );
 };
 
-export default PacksEffects;
+export default Effects;

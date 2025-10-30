@@ -2,11 +2,12 @@ import { defineConfig } from "vite";
 import reactRefresh from "@vitejs/plugin-react-refresh";
 import glsl from 'vite-plugin-glsl';
 import { viteSingleFile } from "vite-plugin-singlefile";
+import svgr from "vite-plugin-svgr";
 
 // https://vitejs.dev/config/
 export default defineConfig({
   root: "./ui-src",
-  plugins: [reactRefresh(), viteSingleFile(), glsl()],
+  plugins: [reactRefresh(), viteSingleFile(), glsl(), svgr()],
   assetsInclude: ['**/*.glb'],
   build: {
     target: "esnext",
