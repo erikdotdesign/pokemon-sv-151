@@ -33,7 +33,7 @@ const Viewer = ({
         <Enviornment />
         <Lights ref={lightsRef} />
         {
-          !state.overlay.selectedCardId
+          !state.overlay.collectionVisible && !state.overlay.selectedCardId
           ? <PackViewer 
               packRef={packRef}
               state={state} 

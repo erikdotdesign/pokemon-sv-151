@@ -5,6 +5,7 @@ import Search from "./svgs/search.svg?react";
 import ClearSettings from "./svgs/reset-settings.svg?react";
 import Close from "./svgs/close.svg?react";
 import Pokeball from "./svgs/pokeball.svg?react";
+import CollectionCard from "./CollectionCard";
 import './Collection.css';
 
 const Collection = ({
@@ -16,7 +17,7 @@ const Collection = ({
 }) => {
   return (
     state.overlay.collectionVisible &&
-    <div className="c-collection">
+    <div className={`c-collection ${state.overlay.selectedCardId ? `c-collection--hidden` : ''}`}>
       <div className="c-collection__header">
         <div>
           <Button modifier={["icon", "circle"]}>
@@ -46,7 +47,16 @@ const Collection = ({
         </div>
       </div>
       <div className="c-collection__cards">
-
+        {
+          Object.keys(state.cardsById).map((id, index) => (
+            <CollectionCard
+              key={id}
+              id={id}
+              index={index}
+              state={state}
+              dispatch={dispatch} />
+          ))
+        }
       </div>
     </div>
   );

@@ -7,12 +7,28 @@
   flex-direction: column;
   background: var(--color-gray);
   z-index: 10;
+  gap: 24px;
+  overflow: scroll;
+  padding: 24px;
+  box-shadow: 1px 1px 0 0 inset rgba(255,255,255,0.6), -1px -1px 0 0 inset rgba(0,0,0,0.2), 1px 4px 8px 0 rgba(0,0,0,0.2), 1px 2px 2px 0 rgba(0,0,0,0.2);
+  transform: translateX(0);
+  transition:
+    transform 0.4s ease,
+    pointer-events 0s linear 0.4s;
+
+  &.c-collection--hidden {
+    pointer-events: none;
+    transform: translateX(-100%);
+    pointer-events: none;
+    transition:
+      transform 0.4s ease,
+      pointer-events 0s linear 0s;
+  }
 }
 
 .c-collection__header {
   display: flex;
   width: 100%;
-  padding: 24px;
 
   & > div {
     display: flex;
@@ -47,4 +63,12 @@
     line-height: 16px;
     font-weight: bold;
   }
+}
+
+.c-collection__cards {
+  width: 100%;
+  max-width: 100%;
+  display: grid;
+  grid-template-columns: repeat(auto-fit, minmax(calc(100% / 5 - 8px), 1fr));
+  gap: 8px;
 }

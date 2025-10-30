@@ -1,8 +1,9 @@
 import { Action, State } from "./reducer";
-import PokeBall from "./svgs/pokeball.svg?react"
 import Button from "./Button";
+import Close from "./svgs/close.svg?react";
+import './Canvas.css';
 
-const CollectionButton = ({
+const CloseOverlayButton = ({
   state,
   dispatch
 }: {
@@ -10,18 +11,18 @@ const CollectionButton = ({
   dispatch: (action: Action) => void;
 }) => {
   return (
-    !state.overlay.collectionVisible && !state.packs.current.opened &&
-    <Button 
+    state.overlay.collectionVisible &&
+    <Button
       modifier={["icon", "circle"]}
       onClick={() => {
         dispatch({
           type: "TOGGLE_COLLECTION_OVERLAY",
-          visible: true
+          visible: false
         })
       }}>
-      <PokeBall />
+      <Close />
     </Button>
   );
 };
 
-export default CollectionButton;
+export default CloseOverlayButton;

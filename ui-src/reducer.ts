@@ -78,6 +78,7 @@ export type Card = {
   };
   images: {
     front: string;
+    thumbnail: string;
     foil?: string;
     etch?: string;
     [key: string]: string | undefined;
@@ -138,14 +139,15 @@ const reducer = (state: State, action: Action): State => {
     case "HYDRATE_STATE":
       return mergeState(state, action.state);
     case "TOGGLE_COLLECTION_OVERLAY": {
+      const visible = typeof action.visible === "boolean"
+        ? action.visible
+        : !state.overlay.collectionVisible;
       return {
         ...state,
         overlay: {
           ...state.overlay,
-          collectionVisible:
-            typeof action.visible === "boolean"
-              ? action.visible
-              : !state.overlay.collectionVisible,
+          collectionVisible: visible,
+          selectedCardId: !visible ? null : state.overlay.selectedCardId
         },
       };
     }

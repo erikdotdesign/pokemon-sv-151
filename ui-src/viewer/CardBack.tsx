@@ -31,7 +31,8 @@ const CardBack = ({
         height={height} 
         cornerRadius={cornerRadius} />
       <meshStandardMaterial
-        map={backTexture} />
+        map={backTexture}
+        fog={false} />
     </mesh>
   );
 }
