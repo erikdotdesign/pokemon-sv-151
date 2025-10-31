@@ -23,7 +23,8 @@ const CollectionNav = ({
   const [sticky, setSticky] = useState(false);
 
   const stickySpring = useSpring({
-    transform: sticky ? `translateY(0%)` : `translateY(-100%)`,
+    transform: sticky ? `translateY(0%)` : `translateY(-110%)`,
+    config: { tension: 220, friction: 26 }
   });
 
   useEffect(() => {

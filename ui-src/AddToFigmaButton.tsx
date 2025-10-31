@@ -17,9 +17,9 @@ const AddToFigmaButton = ({
   const transitions = useTransition(
     state.overlay.collectionVisible && state.overlay.selectedCardId && collected,
     {
-      from: { x: 500 },
-      enter: { x: 0 },
-      leave: { x: 500 },
+      from: { transform: `translateX(500px)` },
+      enter: { transform: `translateX(0px)` },
+      leave: { transform: `translateX(500px)` },
       delay: 125,
       config: { tension: 220, friction: 26 },
       immediate: !state.overlay.collectionVisible
@@ -28,10 +28,7 @@ const AddToFigmaButton = ({
   return (
     transitions((style, item) =>
       item && 
-      <a.div
-        style={{
-          transform: to(style.x, (x) => `translateX(${x}px)`)
-        }}>
+      <a.div style={style}>
         <Button
           modifier={["icon", "circle"]}
           onClick={() => {

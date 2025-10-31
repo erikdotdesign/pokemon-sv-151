@@ -3,9 +3,8 @@
   top: 0;
   left: 0;
   width: 100%;
-  padding: 0 24px 24px 24px;
+  padding: 0 24px;
   z-index: 50;
-  /* background: linear-gradient(to bottom, var(--color-gray), color-mix(in srgb, var(--color-gray) 80%, transparent) 40%, color-mix(in srgb, var(--color-gray) 0%, transparent)); */
 }
 
 .c-collection-nav__inner {

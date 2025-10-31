@@ -6,6 +6,7 @@ import Button from "./Button";
 import CollectionButton from "./CollectionButton";
 import AddToFigmaButton from "./AddToFigmaButton";
 import BackToCollectionButton from "./BackToCollectionButton";
+import CardNotCollected from "./CardNotCollected";
 
 import './Canvas.css';
 
@@ -35,9 +36,10 @@ const Canvas = ({
           collectionRef={collectionRef}
           state={state}
           dispatch={dispatch} />
-        {/* <CloseOverlayButton
-          state={state}
-          dispatch={dispatch} /> */}
+      </div>
+      <div className="c-canvas__controls c-canvas__controls--middle c-canvas__controls--center">
+        <CardNotCollected
+          state={state} />
       </div>
       <Viewer
         canvasRef={canvasRef}

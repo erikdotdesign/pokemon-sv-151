@@ -40,7 +40,7 @@ const Viewer = ({
           lightsRef={lightsRef}
           packRef={packRef}
           state={state} />
-        <OrbitControls />
+        {/* <OrbitControls /> */}
       </Canvas>
     </PostProcessingContext.Provider>
   );
