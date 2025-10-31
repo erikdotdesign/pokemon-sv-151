@@ -1,4 +1,4 @@
-import { a, useSpring, useTransition, to } from "@react-spring/web";
+import { a, useTransition, to } from "@react-spring/web";
 import { Action, State } from "./reducer";
 import PokeBall from "./svgs/pokeball.svg?react"
 import Button from "./Button";

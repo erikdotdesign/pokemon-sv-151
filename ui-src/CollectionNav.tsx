@@ -24,7 +24,6 @@ const CollectionNav = ({
 
   const stickySpring = useSpring({
     transform: sticky ? `translateY(0%)` : `translateY(-100%)`,
-    // opacity: sticky ? 1 : 0,
   });
 
   useEffect(() => {

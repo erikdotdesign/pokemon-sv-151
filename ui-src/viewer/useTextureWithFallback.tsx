@@ -4,32 +4,17 @@ import * as THREE from "three";
 const textureLoader = new THREE.TextureLoader();
 
 // ----------------------
-// Load a texture with fallback
+// Load a texture
 // ----------------------
-const loadWithFallback = (primaryUrl?: string, fallbackUrl?: string) => {
-  return new Promise<THREE.Texture>((resolve) => {
-    const loadTexture = (url: string, onFail?: () => void) => {
-      textureLoader.load(
-        url,
-        (tex) => {
-          resolve(tex);
-        },
-        undefined,
-        () => {
-          console.error(`Failed to load texture: ${url}`);
-          if (onFail) onFail();
-        }
-      );
-    };
-    if (primaryUrl) {
-      loadTexture(primaryUrl, () => {
-        if (fallbackUrl) loadTexture(fallbackUrl);
-      });
-    } else if (fallbackUrl) {
-      loadTexture(fallbackUrl);
-    }
+const loadTexture = (url: string) =>
+  new Promise<THREE.Texture>((resolve, reject) => {
+    textureLoader.load(
+      url,
+      (tex) => resolve(tex),
+      undefined,
+      () => reject(new Error(`Failed to load texture: ${url}`))
+    );
   });
-};
 
 // ----------------------
 // Hook
@@ -46,21 +31,37 @@ const useTextureWithFallback = ({
   const [texture, setTexture] = useState<THREE.Texture | null>(null);
 
   useEffect(() => {
-    if (!primaryUrl && !fallbackUrl) return;
     let isCancelled = false;
 
-    loadWithFallback(primaryUrl, fallbackUrl).then((tex) => {
-      if (isCancelled) return;
-      tex.colorSpace = colorSpace;
-      tex.needsUpdate = true;
-      setTexture(tex);
-    });
+    // Load fallback first
+    if (fallbackUrl) {
+      loadTexture(fallbackUrl)
+        .then((tex) => {
+          if (isCancelled) return;
+          tex.colorSpace = colorSpace;
+          tex.needsUpdate = true;
+          setTexture(tex);
+        })
+        .catch((err) => console.warn(err));
+    }
+
+    // Then load primary (overwrites fallback when ready)
+    if (primaryUrl) {
+      loadTexture(primaryUrl)
+        .then((tex) => {
+          if (isCancelled) return;
+          tex.colorSpace = colorSpace;
+          tex.needsUpdate = true;
+          setTexture(tex);
+        })
+        .catch((err) => console.warn(err));
+    }
 
     return () => {
       isCancelled = true;
-      // do NOT dispose the cached texture here — it’s global and reused
+      // don’t dispose global textures here
     };
-  }, [primaryUrl, fallbackUrl]);
+  }, [primaryUrl, fallbackUrl, colorSpace]);
 
   return texture;
 };
