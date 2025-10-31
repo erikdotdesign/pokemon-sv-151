@@ -9,8 +9,7 @@ import Effects from "./Effects";
 import Enviornment from "./Enviornment";
 import Lights, { LightsHandle } from "./Lights";
 import Floor from "./Floor";
-import PackViewer from "./PackViewer";
-import CardViewer from "./CardViewer";
+import ViewerRouter from "./ViewerRouter";
 
 const Viewer = ({ 
   canvasRef,
@@ -32,22 +31,16 @@ const Viewer = ({
         gl={{ outputColorSpace: THREE.SRGBColorSpace }}>
         <Enviornment />
         <Lights ref={lightsRef} />
-        {
-          !state.overlay.collectionVisible && !state.overlay.selectedCardId
-          ? <PackViewer 
-              packRef={packRef}
-              state={state} 
-              dispatch={dispatch} />
-          : <CardViewer 
-              state={state}
-              dispatch={dispatch} />
-        }
+        <ViewerRouter
+          packRef={packRef}
+          state={state}
+          dispatch={dispatch} />
         <Floor state={state} />
         <Effects 
           lightsRef={lightsRef}
           packRef={packRef}
           state={state} />
-        {/* <OrbitControls /> */}
+        <OrbitControls />
       </Canvas>
     </PostProcessingContext.Provider>
   );

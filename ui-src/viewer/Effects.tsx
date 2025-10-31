@@ -30,7 +30,7 @@ const Effects = ({
       setBloomSelection(pack ? [pack] : []);
       setBloomLights([ambientLight, dirLight1, dirLight2]);
     }
-  }, [packRef, lightsRef]);
+  }, [packRef, lightsRef, state.overlay.collectionVisible]);
 
   return (
     postProcessing &&

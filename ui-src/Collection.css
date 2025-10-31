@@ -11,19 +11,6 @@
   overflow: scroll;
   padding: 24px;
   box-shadow: 1px 1px 0 0 inset rgba(255,255,255,0.6), -1px -1px 0 0 inset rgba(0,0,0,0.2), 1px 4px 8px 0 rgba(0,0,0,0.2), 1px 2px 2px 0 rgba(0,0,0,0.2);
-  transform: translateX(0);
-  transition:
-    transform 0.4s ease,
-    pointer-events 0s linear 0.4s;
-
-  &.c-collection--hidden {
-    pointer-events: none;
-    transform: translateX(-100%);
-    pointer-events: none;
-    transition:
-      transform 0.4s ease,
-      pointer-events 0s linear 0s;
-  }
 }
 
 .c-collection__header {

@@ -36,9 +36,9 @@ const Canvas = ({
         <CollectionButton 
           state={state}
           dispatch={dispatch} />
-        <CloseOverlayButton
+        {/* <CloseOverlayButton
           state={state}
-          dispatch={dispatch} />
+          dispatch={dispatch} /> */}
       </div>
       <Viewer
         canvasRef={canvasRef}
