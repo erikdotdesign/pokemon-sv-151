@@ -68,12 +68,12 @@ const Collection = ({
               </div>
             </div>
             <div>
-              <Button modifier={["icon", "circle"]}>
+              {/* <Button modifier={["icon", "circle"]}>
                 <ClearSettings />
               </Button>
               <Button modifier={["icon", "circle"]}>
                 <Search />
-              </Button>
+              </Button> */}
             </div>
           </div>
           <div className="c-collection__cards">

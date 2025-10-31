@@ -6,6 +6,7 @@ import usePluginStorage from "./usePluginStorage";
 import Canvas from "./Canvas";
 import "./App.css";
 import Collection from "./Collection";
+import useCollection from "./useCollection";
 
 const CARDS_BY_ID = Object.fromEntries(
   cardData.map(card => [card.ext.tcgl.cardID, card as Card])
@@ -42,6 +43,8 @@ const App = () => {
 
   const canvasRef = useRef<HTMLCanvasElement>(null);
 
+  const collectionRef = useCollection(state);
+
   usePluginStorage(
     state, 
     dispatch
@@ -53,7 +56,8 @@ const App = () => {
         <Canvas
           state={state}
           dispatch={dispatch}
-          canvasRef={canvasRef} />
+          canvasRef={canvasRef}
+          collectionRef={collectionRef} />
         <Collection
           state={state}
           dispatch={dispatch} />

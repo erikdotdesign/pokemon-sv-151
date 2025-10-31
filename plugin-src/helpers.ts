@@ -1,5 +1,6 @@
 export const getTargetBounds = () => {
   const selection = figma.currentPage.selection;
+
   if (selection.length > 0) {
     let minX = Infinity;
     let minY = Infinity;
@@ -15,10 +16,7 @@ export const getTargetBounds = () => {
       if (box.y + box.height > maxY) maxY = box.y + box.height;
     }
 
-    if (minX === Infinity || minY === Infinity || maxX === -Infinity || maxY === -Infinity) {
-      // fallback if no valid bounding boxes
-      return null;
-    }
+    if (minX === Infinity) return null;
 
     return {
       x: minX,
@@ -27,37 +25,56 @@ export const getTargetBounds = () => {
       height: maxY - minY,
     };
   } else {
-    // fallback to viewport bounds
     const vw = figma.viewport.bounds.width;
     const vh = figma.viewport.bounds.height;
-    return { x: figma.viewport.center.x - vw / 2, y: figma.viewport.center.y - vh / 2, width: vw, height: vh };
+    return {
+      x: figma.viewport.center.x - vw / 2,
+      y: figma.viewport.center.y - vh / 2,
+      width: vw,
+      height: vh,
+    };
   }
 };
 
 export const scaleAndPositionNode = (
   node: SceneNode,
   scalePercent = 1,
-  maxWidthOption?: number
+  maxWidthOption?: number,
+  aspectRatio = 1
 ) => {
-  const targetBounds = getTargetBounds() as { x: number; y: number; width: number; height: number };
-  const margin = 0; // optional margin in pixels
+  const targetBounds = getTargetBounds();
+  if (!targetBounds) return;
 
-  // Determine max width/height based on target bounds and optional maxWidthOption
-  const maxWidth = Math.min(targetBounds.width * scalePercent - margin, maxWidthOption ?? Infinity);
-  const maxHeight = targetBounds.height * scalePercent - margin;
+  const margin = 0;
+  let targetWidth = targetBounds.width * scalePercent - margin;
+  let targetHeight = targetBounds.height * scalePercent - margin;
 
-  const scaleX = maxWidth / node.width;
-  const scaleY = maxHeight / node.height;
+  // Clamp width if requested
+  if (maxWidthOption && targetWidth > maxWidthOption) {
+    targetWidth = maxWidthOption;
+  }
 
-  // Use the smaller scale to keep aspect ratio
-  const scale = Math.min(scaleX, scaleY);
+  // Force the region to match aspect ratio (reshape it)
+  if (aspectRatio > 0) {
+    // Derive height from width
+    targetHeight = targetWidth / aspectRatio;
 
-  // Apply scale
-  (node as any).resize(node.width * scale, node.height * scale);
+    // If it exceeds available height, adjust width instead
+    if (targetHeight > targetBounds.height * scalePercent - margin) {
+      targetHeight = targetBounds.height * scalePercent - margin;
+      targetWidth = targetHeight * aspectRatio;
+    }
+  }
 
-  // Position node centered inside target bounds
-  node.x = targetBounds.x + (targetBounds.width - node.width) / 2;
-  node.y = targetBounds.y + (targetBounds.height - node.height) / 2;
+  // Resize node to that shape (no proportional lock)
+  node.resize(targetWidth, targetHeight);
+  
+  // Lock aspect ratio
+  node.lockAspectRatio();
 
-  return scale;
+  // Center inside target
+  node.x = targetBounds.x + (targetBounds.width - targetWidth) / 2;
+  node.y = targetBounds.y + (targetBounds.height - targetHeight) / 2;
+
+  return { width: targetWidth, height: targetHeight };
 };

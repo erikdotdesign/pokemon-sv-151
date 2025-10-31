@@ -1,7 +1,6 @@
 import { Action, State } from "./reducer";
 import Button from "./Button";
 import Close from "./svgs/close.svg?react";
-import './Canvas.css';
 
 const CloseOverlayButton = ({
   state,

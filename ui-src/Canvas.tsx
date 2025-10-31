@@ -2,16 +2,19 @@ import { Action, State } from "./reducer";
 import Viewer from "./viewer/Viewer";
 import Button from "./Button";
 import CollectionButton from "./CollectionButton";
-import CloseOverlayButton from "./CloseOverlayButton";
+import AddToFigmaButton from "./AddToFigmaButton";
 import Back from "./svgs/back.svg?react";
 import './Canvas.css';
+import { CollectionRef } from "./useCollection";
 
 const Canvas = ({
   canvasRef,
+  collectionRef,
   state,
   dispatch
 }: {
   canvasRef: React.RefObject<HTMLCanvasElement | null>;
+  collectionRef: CollectionRef;
   state: State;
   dispatch: (action: Action) => void;
 }) => {
@@ -34,6 +37,10 @@ const Canvas = ({
       </div>
       <div className="c-canvas__controls c-canvas__controls--top c-canvas__controls--right">
         <CollectionButton 
+          state={state}
+          dispatch={dispatch} />
+        <AddToFigmaButton
+          collectionRef={collectionRef}
           state={state}
           dispatch={dispatch} />
         {/* <CloseOverlayButton

@@ -15,8 +15,8 @@ const CardViewer = ({
   const rotatorRef = useRef<RotatorHandle>(null);
 
   return (
-    <group position-z={2.25} rotation-y={collected ? 0 : Math.PI}>
-      <Rotator ref={rotatorRef}>
+    <group position-z={2.25}>
+      <Rotator key={card.ext.tcgl.cardID} ref={rotatorRef} flipped={!collected}>
         <Card rotatorRef={rotatorRef} card={card} />
       </Rotator>
     </group>

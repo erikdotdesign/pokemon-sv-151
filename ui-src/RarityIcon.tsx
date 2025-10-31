@@ -15,21 +15,23 @@ const RarityIcon = ({
 }) => {
   switch(rarity) {
     case "COMMON":
-      return Common;
+      return <Common />;
     case "UNCOMMON":
-      return Uncommon;
+      return <Uncommon />;
     case "RARE":
-      return Rare;
+      return <Rare />;
     case "DOUBLE_RARE":
-      return DoubleRare;
+      return <DoubleRare />;
     case "ULTRA_RARE":
-      return UltraRare;
+      return <UltraRare />;
     case "ILLUSTRATION_RARE":
-      return IllustrationRare;
+      return <IllustrationRare />;
     case "SPECIAL_ILLUSTRATION_RARE":
-      return SpecialIllustrationRare;
+      return <SpecialIllustrationRare />;
     case "HYPER_RARE":
-      return HyperRare;
+      return <HyperRare />;
+    default:
+      return null;
   }
 };
 

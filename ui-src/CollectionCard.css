@@ -19,7 +19,7 @@
   align-items: center;
   justify-content: center;
   font-family: var(--font-family);
-  color: var(--color-text-lightest);
+  color: var(--color-text-too-light);
   font-weight: 900;
   font-size: 20px;
   line-height: 24px;
@@ -31,7 +31,7 @@
   display: flex;
   align-items: center;
   justify-content: center;
-  width: 48px;
+  width: 32px;
   font-family: var(--font-family);
   font-size: 8px;
   line-height: 12px;

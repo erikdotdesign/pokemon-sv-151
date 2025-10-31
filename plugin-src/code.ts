@@ -11,16 +11,16 @@ const loadFromStorage = async (key: string) => {
   figma.ui.postMessage({ type: "storage-loaded", key, value });
 };
 
-const addImage = async (img: string, disclaimer = false) => {
+const addImage = async (msg: { img: string, name: string }, disclaimer = false) => {
   // Fallback to image
-  const base64 = img.split(",")[1];
+  const base64 = msg.img.split(",")[1];
   const data = figma.base64Decode(base64);
   const image = figma.createImage(data);
 
   const node = figma.createRectangle();
   node.fills = [{ type: "IMAGE", scaleMode: "FILL", imageHash: image.hash }];
-  node.name = "pokemon-tcg";
-  scaleAndPositionNode(node, 1, 2400);
+  node.name = msg.name;
+  scaleAndPositionNode(node, 1, 733, 733/1024);
   figma.currentPage.selection = [node];
   if (disclaimer) {
     figma.notify(`Image added (a Figma pro plan is required for video 😢)`);
@@ -29,7 +29,7 @@ const addImage = async (img: string, disclaimer = false) => {
   }
 };
 
-const addVideoOrImage = async (msg: { video: string; image: string }) => {
+const addVideoOrImage = async (msg: { video: string; image: string, name: string }) => {
   try {
     // Try video first
     const base64 = msg.video.split(",")[1];
@@ -38,21 +38,21 @@ const addVideoOrImage = async (msg: { video: string; image: string }) => {
 
     const node = figma.createRectangle();
     node.fills = [{ type: "VIDEO", scaleMode: "FILL", videoHash: video.hash }];
-    node.name = "pokemon-tcg";
-    scaleAndPositionNode(node, 1, 2400);
+    node.name = msg.name;
+    scaleAndPositionNode(node, 1, 733);
     figma.currentPage.selection = [node];
     figma.notify(`Video added`);
   } catch {
     // Fallback to image
-    addImage(msg.image, true);
+    addImage({img: msg.image, name: msg.name}, true);
   }
 };
 
 const handlers: Record<string, (msg: any) => void | Promise<void>> = {
   "save-storage": (msg) => saveToStorage(msg.key, msg.value),
   "load-storage": (msg) => loadFromStorage(msg.key),
-  "add-video": (msg) => addVideoOrImage(msg),
-  "add-image": (msg) => addImage(msg.image)
+  "add-video": (msg) => addVideoOrImage(msg.value),
+  "add-image": (msg) => addImage(msg.value)
 };
 
 figma.ui.onmessage = async (msg) => {

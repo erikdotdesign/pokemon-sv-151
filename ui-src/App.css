@@ -27,6 +27,7 @@
   --color-text-light: color-mix(in srgb, var(--color-text-base) 75%, transparent);
   --color-text-lighter: color-mix(in srgb, var(--color-text-base) 50%, transparent);
   --color-text-lightest: color-mix(in srgb, var(--color-text-base) 25%, transparent);
+  --color-text-too-light: color-mix(in srgb, var(--color-text-base) 15%, transparent);
   --color-text-base-on-primary: #FFFFFF;
   --color-text-base-on-red: #FFFFFF;
   --color-type-water: #05A8D9;
@@ -52,7 +53,7 @@
   height: 100vh;
   width: 100vw;
   overflow: hidden;
-  background: var(--color-bg-z0);
+  background: var(--color-gray);
 }
 
 .c-app__body {

@@ -43,7 +43,7 @@ const ViewerRouter = ({
       return {};
     },
     config: { tension: 170, friction: 26 },
-    delay: 350
+    delay: 450
   });
 
   return transitions((style, item) => {

@@ -60,12 +60,12 @@ const CollectionNav = ({
           </div>
         </div>
         <div>
-          <Button modifier={["icon", "circle", "flat"]}>
+          {/* <Button modifier={["icon", "circle", "flat"]}>
             <ClearSettings />
           </Button>
           <Button modifier={["icon", "circle", "flat"]}>
             <Search />
-          </Button>
+          </Button> */}
         </div>
       </div>
     </a.div>

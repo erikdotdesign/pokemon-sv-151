@@ -18,27 +18,27 @@ const TypeIcon = ({
 }) => {
   switch(type) {
     case "COLORLESS":
-      return Colorless;
+      return <Colorless />;
     case "DARKNESS":
-      return Darkness;
+      return <Darkness />;
     case "DRAGON":
-      return Dragon;
+      return <Dragon />;
     case "FAIRY":
-      return Fairy;
+      return <Fairy />;
     case "FIGHTING":
-      return Fighting;
+      return <Fighting />;
     case "FIRE":
-      return Fire;
+      return <Fire />;
     case "GRASS":
-      return Grass;
+      return <Grass />;
     case "LIGHTNING":
-      return Lightning;
+      return <Lightning />;
     case "METAL":
-      return Metal;
+      return <Metal />;
     case "PSYCHIC":
-      return Psychic;
+      return <Psychic />;
     case "WATER":
-      return Water;
+      return <Water />;
   }
 };
 
