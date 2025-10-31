@@ -1,11 +1,13 @@
 import { Action, State } from "./reducer";
+import Back from "./svgs/back.svg?react";
+import { CollectionRef } from "./useCollection";
 import Viewer from "./viewer/Viewer";
 import Button from "./Button";
 import CollectionButton from "./CollectionButton";
 import AddToFigmaButton from "./AddToFigmaButton";
-import Back from "./svgs/back.svg?react";
+import BackToCollectionButton from "./BackToCollectionButton";
+
 import './Canvas.css';
-import { CollectionRef } from "./useCollection";
 
 const Canvas = ({
   canvasRef,
@@ -21,19 +23,9 @@ const Canvas = ({
   return (
     <div className="c-canvas">
       <div className="c-canvas__controls c-canvas__controls--top c-canvas__controls--left">
-        {
-          state.overlay.collectionVisible && state.overlay.selectedCardId &&
-          <Button
-            modifier={["icon", "circle"]}
-            onClick={() => {
-              dispatch({
-                type: "SET_SELECTED_CARD",
-                cardId: null
-              })
-            }}>
-            <Back />
-          </Button>
-        }
+        <BackToCollectionButton
+          state={state}
+          dispatch={dispatch} />
       </div>
       <div className="c-canvas__controls c-canvas__controls--top c-canvas__controls--right">
         <CollectionButton 
