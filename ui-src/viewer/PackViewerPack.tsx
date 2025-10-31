@@ -1,4 +1,4 @@
-import { useRef, useState } from "react";
+import { useRef } from "react";
 import * as THREE from "three";
 import { Sparkles } from "@react-three/drei";
 import { useFrame } from "@react-three/fiber";
@@ -24,14 +24,6 @@ const PackViewerPack = ({
 }) => {
   const { opened } = state.packs.current;
   const hoverRef = useRef<THREE.Group>(null!);
-
-  // Pack mount spring
-  // const packMountSpring = useSpring({
-  //   from: { positionY: 10 },
-  //   to: { positionY: 0 },
-  //   config: springConfig,
-  //   delay: 350
-  // });
 
   // Pack rotation & scale spring
   const packRotationSpring = useSpring({
