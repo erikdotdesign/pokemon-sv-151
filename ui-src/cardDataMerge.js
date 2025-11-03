@@ -28,19 +28,19 @@ for (const card of malieData) {
   const etchPath = path.join(etchDir, `${cardId}.webp`);
   const malieImages = card.images.tcgl.png;
   let newImages = { front: tcgImages.large, thumbnail: tcgImages.small  };
-  if (malieImages.foil || malieImages.etch) newImages.fallBack = {};
+  if (malieImages.foil || malieImages.etch) newImages.fallback = {};
   if (malieImages.foil) {
     newImages = { 
       ...newImages, 
       foil: malieImages.foil,
-      fallBack: { ...newImages.fallBack, foil: foilPath }
+      fallback: { ...newImages.fallback, foil: foilPath }
     }
   }
   if (malieImages.etch) {
     newImages = { 
       ...newImages, 
       etch: malieImages.etch,
-      fallBack: { ...newImages.fallBack, etch: etchPath }
+      fallback: { ...newImages.fallback, etch: etchPath }
     }
   };
   card.images = newImages;

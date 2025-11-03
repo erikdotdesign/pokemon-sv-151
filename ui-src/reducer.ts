@@ -81,7 +81,10 @@ export type Card = {
     thumbnail: string;
     foil?: string;
     etch?: string;
-    [key: string]: string | undefined;
+    fallback?: {
+      foil?: string;
+      etch?: string;
+    };
   };
 }
 
