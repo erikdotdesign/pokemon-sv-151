@@ -1,4 +1,4 @@
-import { PokemonTypes } from "./reducer";
+import { PokemonType } from "./reducer";
 import Colorless from "./svgs/types/colorless.svg?react";
 import Darkness from "./svgs/types/darkness.svg?react";
 import Dragon from "./svgs/types/dragon.svg?react";
@@ -12,9 +12,9 @@ import Psychic from "./svgs/types/psychic.svg?react";
 import Water from "./svgs/types/water.svg?react";
 
 const TypeIcon = ({
-  type 
+  type
 }: {
-  type: PokemonTypes;
+  type: PokemonType;
 }) => {
   switch(type) {
     case "COLORLESS":

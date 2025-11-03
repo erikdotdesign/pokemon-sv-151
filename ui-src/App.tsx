@@ -16,11 +16,12 @@ const App = () => {
   const [state, dispatch] = useReducer(reducer, {
     overlay: {
       collectionVisible: false,
+      filtersVisible: false,
       selectedCardId: null,
       filters: {
         query: "",
-        rarity: "ALL",
-        type: "ALL",
+        rarities: ["ALL"],
+        types: ["ALL"],
         sort: "index"
       }
     },

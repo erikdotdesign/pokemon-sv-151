@@ -5,7 +5,7 @@ export type CardFoilMask = "ETCHED" | "HOLO" | "REVERSE";
 
 export type CardRarity = "COMMON" | "UNCOMMON" | "RARE" | "DOUBLE_RARE" | "ULTRA_RARE" | "ILLUSTRATION_RARE" | "SPECIAL_ILLUSTRATION_RARE" | "HYPER_RARE";
 
-export type PokemonTypes = "COLORLESS" | "DARKNESS" | "DRAGON" | "FAIRY" | "FIGHTING" | "FIRE" | "GRASS" | "LIGHTNING" | "METAL" | "PSYCHIC" | "WATER";
+export type PokemonType = "COLORLESS" | "DARKNESS" | "DRAGON" | "FAIRY" | "FIGHTING" | "FIRE" | "GRASS" | "LIGHTNING" | "METAL" | "PSYCHIC" | "WATER";
 
 export type CardText =
   | {
@@ -58,7 +58,7 @@ export type Card = {
   stage?: string;
   stage_text?: string;
   hp?: number;
-  types?: PokemonTypes[];
+  types?: PokemonType[];
   weakness?: {
     types: string[];
     operator?: string;
@@ -102,12 +102,13 @@ export type View = "collection" | "packs";
 
 export type Overlay = {
   collectionVisible: boolean;
+  filtersVisible: boolean;
   selectedCardId?: string | null;
   filters: {
-    query?: string;
-    rarity?: CardRarity | "ALL";
-    type?: PokemonTypes | "ALL";
-    sort?: "name" | "rarity" | "type" | "index";
+    query: string;
+    rarities: (CardRarity | "ALL")[];
+    types: (PokemonType | "ALL")[];
+    sort: "name" | "rarity" | "type" | "index";
   };
 }
 
@@ -127,6 +128,7 @@ export type Action =
   | { type: "HYDRATE_STATE"; state: State | Partial<State> }
   | { type: "TOGGLE_COLLECTION_OVERLAY"; visible?: boolean }
   | { type: "SET_SELECTED_CARD"; cardId: string | null }
+  | { type: "TOGGLE_FILTERS_OVERLAY"; visible?: boolean }
   | { type: "SET_COLLECTION_FILTER"; filters: Partial<Overlay["filters"]> }
   | { type: "CLEAR_COLLECTION_FILTERS" }
   | { type: "SET_NEW_CURRENT_PACK", cards: string[] }
@@ -147,7 +149,8 @@ const reducer = (state: State, action: Action): State => {
         overlay: {
           ...state.overlay,
           collectionVisible: visible,
-          selectedCardId: !visible ? null : state.overlay.selectedCardId
+          filtersVisible: !visible ? false : state.overlay.filtersVisible,
+          selectedCardId: !visible ? null : state.overlay.selectedCardId,
         },
       };
     }
@@ -157,6 +160,18 @@ const reducer = (state: State, action: Action): State => {
         overlay: {
           ...state.overlay,
           selectedCardId: action.cardId,
+        },
+      };
+    }
+    case "TOGGLE_FILTERS_OVERLAY": {
+      const visible = typeof action.visible === "boolean"
+        ? action.visible
+        : !state.overlay.filtersVisible;
+      return {
+        ...state,
+        overlay: {
+          ...state.overlay,
+          filtersVisible: visible,
         },
       };
     }
@@ -179,8 +194,8 @@ const reducer = (state: State, action: Action): State => {
           ...state.overlay,
           filters: {
             query: "",
-            rarity: "ALL",
-            type: "ALL",
+            rarities: ["ALL"],
+            types: ["ALL"],
             sort: "index",
           },
         },

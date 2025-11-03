@@ -1,11 +1,11 @@
 import { useState, useEffect, useRef } from "react";
 import { a, useSpring, useTransition, to } from "@react-spring/web";
 import { Action, State } from "./reducer";
-import Search from "./svgs/search.svg?react";
-import ClearSettings from "./svgs/reset-settings.svg?react";
-import Back from "./svgs/back.svg?react";
+import { collectionIsFiltered } from "./selectors";
 import Pokeball from "./svgs/pokeball.svg?react";
-import CollectionCard from "./CollectionCard";
+import CollectionFiltersButton from "./CollectionFiltersButton";
+import CloseCollectionButton from "./CloseCollectionButton";
+import ClearFiltersButton from "./ClearFiltersButton";
 import Button from "./Button";
 import './CollectionNav.css';
 
@@ -21,6 +21,7 @@ const CollectionNav = ({
   dispatch: (action: Action) => void;
 }) => {
   const [sticky, setSticky] = useState(false);
+  const collectionFiltered = collectionIsFiltered(state);
 
   const stickySpring = useSpring({
     transform: sticky ? `translateY(0%)` : `translateY(-110%)`,
@@ -42,16 +43,9 @@ const CollectionNav = ({
     <a.div className="c-collection-nav" style={stickySpring}>
       <div className="c-collection-nav__inner">
         <div>
-          <Button 
-            modifier={["icon", "circle", "flat"]}
-            onClick={() => {
-              dispatch({
-                type: "TOGGLE_COLLECTION_OVERLAY",
-                visible: false
-              })
-            }}>
-            <Back />
-          </Button>
+          <CloseCollectionButton
+            flat
+            dispatch={dispatch} />
         </div>
         <div>
           <div className="c-collection-nav__collected">
@@ -60,12 +54,17 @@ const CollectionNav = ({
           </div>
         </div>
         <div>
-          {/* <Button modifier={["icon", "circle", "flat"]}>
-            <ClearSettings />
-          </Button>
-          <Button modifier={["icon", "circle", "flat"]}>
-            <Search />
-          </Button> */}
+          {
+            collectionFiltered
+            ? <ClearFiltersButton
+                flat
+                state={state}
+                dispatch={dispatch} />
+            : null
+          }
+          <CollectionFiltersButton
+            flat
+            dispatch={dispatch} />
         </div>
       </div>
     </a.div>

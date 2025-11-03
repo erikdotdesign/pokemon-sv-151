@@ -2,8 +2,6 @@ import { State, CardRarity, Card } from "./reducer";
 
 // --- Basic helpers ---
 
-export const getView = (state: State) => state.view;
-
 export const getAvailablePacks = (state: State) => state.packs.available;
 
 export const getCurrentPackIds = (state: State) =>
@@ -174,4 +172,81 @@ export const displayPack = (): string[] => {
   const reverseFoil2 = "sv3-5_199";
   const rare = "sv3-5_122";
   return [...commons, ...unCommons, reverseFoil, reverseFoil2, rare];
+};
+
+export const getFilteredCollection = (state: State) => {
+  const { filters } = state.overlay;
+  const allCards = Object.keys(state.cardsById);
+  let cards = Object.keys(state.collection.cards);
+
+  // --- Filtering ---
+  if (filters.query) {
+    const q = filters.query.toLowerCase();
+    cards = cards.filter(c =>
+      state.cardsById[c].name.toLowerCase().includes(q)
+    );
+  }
+
+  if (!filters.rarities.includes("ALL")) {
+    cards = cards.filter(c =>
+      filters.rarities?.includes(state.cardsById[c].rarity.designation)
+    );
+  }
+
+  if (!filters.types.includes("ALL")) {
+    cards = cards.filter(c =>
+      state.cardsById[c].types?.some(t => filters.types?.includes(t))
+    );
+  }
+
+  // --- Sorting ---
+  cards.sort((a, b) => {
+    const cardA = state.cardsById[a];
+    const cardB = state.cardsById[b];
+
+    switch (filters.sort) {
+      case "name":
+        return cardA.name.localeCompare(cardB.name);
+      case "rarity":
+        // define rarity order manually if needed
+        const rarityOrder = [
+          "COMMON",
+          "UNCOMMON",
+          "RARE",
+          "DOUBLE_RARE",
+          "ULTRA_RARE",
+          "ILLUSTRATION_RARE",
+          "SPECIAL_ILLUSTRATION_RARE",
+          "HYPER_RARE"
+        ];
+        return (
+          rarityOrder.indexOf(cardA.rarity.designation) -
+          rarityOrder.indexOf(cardB.rarity.designation)
+        );
+      case "type":
+        // Sort by first type alphabetically
+        const typeA = cardA.types?.[0] || "";
+        const typeB = cardB.types?.[0] || "";
+        return typeA.localeCompare(typeB);
+      case "index":
+      default:
+        return allCards.indexOf(a) - allCards.indexOf(b);
+    }
+  });
+
+  return cards;
+};
+
+export const getCollectionFilterCount = (state: State) => {
+  const { filters } = state.overlay;
+  let count = 0;
+  if (filters.query) count++;
+  if (filters.rarities[0] !== "ALL") count += filters.rarities.length;
+  if (filters.types[0] !== "ALL") count += filters.types.length;
+  return count;
+};
+
+export const collectionIsFiltered = (state: State) => {
+  const { filters } = state.overlay;
+  return filters.query || filters.rarities[0] !== "ALL" || filters.types[0] !== "ALL";
 };

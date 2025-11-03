@@ -16,7 +16,11 @@
   gap: 8px;
 
   svg {
-    fill: currentColor;
+    fill: currentColor !important;
+
+    path {
+      fill: currentColor !important;
+    }
   }
 
   &:disabled {
@@ -31,7 +35,6 @@
   &.c-button--primary {
     color: var(--color-text-base-on-primary);
     background: var(--color-primary);
-    box-shadow: none;
 
     &:hover {
       background: var(--color-primary-hover);
