@@ -103,6 +103,10 @@
   z-index: 2;
   gap: 16px;
 
+  &.c-canvas__controls--disabled {
+    pointer-events: none;
+  }
+
   &.c-canvas__controls--top {
     top: 0;
   }

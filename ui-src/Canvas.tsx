@@ -37,7 +37,7 @@ const Canvas = ({
           state={state}
           dispatch={dispatch} />
       </div>
-      <div className="c-canvas__controls c-canvas__controls--middle c-canvas__controls--center">
+      <div className="c-canvas__controls c-canvas__controls--middle c-canvas__controls--center c-canvas__controls--disabled">
         <CardNotCollected
           state={state} />
       </div>
